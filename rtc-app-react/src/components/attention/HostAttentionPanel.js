@@ -449,19 +449,15 @@ const HostAttentionPanel = ({ onClose }) => {
     }
   }, [combinedData, validParticipants]);
   
-  // Function to calculate state duration in seconds from stateSince timestamp
   const calculateStateDuration = (stateSince) => {
     if (!stateSince) return 0;
     
     try {
-      // Support both millisecond timestamps (numbers) and date strings
       let timestampMs;
       
       if (typeof stateSince === 'number') {
-        // Already a timestamp in milliseconds
         timestampMs = stateSince;
       } else {
-        // Parse as date string
         const date = new Date(stateSince);
         if (isNaN(date.getTime())) {
           console.error('Invalid date in calculateStateDuration:', stateSince);
@@ -473,9 +469,8 @@ const HostAttentionPanel = ({ onClose }) => {
       const nowMs = Date.now();
       const diffSeconds = (nowMs - timestampMs) / 1000;
       
-      // Sanity check - don't allow negative durations or durations over 48 hours
       if (diffSeconds < 0) return 0;
-      if (diffSeconds > 172800) return 172800; // Cap at 48 hours
+      if (diffSeconds > 172800) return 172800
       
       return diffSeconds;
     } catch (error) {
@@ -873,7 +868,6 @@ const HostAttentionPanel = ({ onClose }) => {
                   
                   const displayName = participant.displayName;
                   
-                  // Calculate state duration using our helper function
                   const stateDuration = calculateStateDuration(data.stateSince);
                   
                   return (
@@ -949,7 +943,6 @@ const HostAttentionPanel = ({ onClose }) => {
                   const data = combinedData[participant.id];
                   if (!data) return null;
                   
-                  // Calculate state duration using our helper function
                   const feedStateDuration = calculateStateDuration(data.stateSince);
                   
                   return (

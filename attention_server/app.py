@@ -426,7 +426,7 @@ def detect_attention(pil_image, cv_image, user_id):
         return state
 
 def update_attention_history(user_id, attention_state):
-    current_time = int(time.time() * 1000)  # Convert to milliseconds
+    current_time = int(time.time() * 1000)
     
     if user_id not in user_attention_data:
         user_attention_data[user_id] = {
@@ -439,7 +439,7 @@ def update_attention_history(user_id, attention_state):
             prev_state = user_attention_data[user_id].get("current_state")
             prev_since = user_attention_data[user_id].get("state_since", current_time)
             
-            # Convert from milliseconds to seconds for duration calculation
+          
             duration = (current_time - prev_since) / 1000.0
             
             if duration > 1:
@@ -487,15 +487,12 @@ def api_detect_attention():
                     if entry["state"] in [ATTENTIVE, ACTIVE]:
                         attentive_time += duration
             
-            # Generate millisecond timestamp for consistency
             current_timestamp = int(time.time() * 1000)
             
-            # Calculate current duration in seconds - convert timestamps from ms to seconds
             state_since = user_data.get("state_since", current_timestamp)
             current_duration = (current_timestamp - state_since) / 1000.0
             
             if current_duration < 0:
-                # Handle potential clock skew
                 current_duration = 0
                 
             total_time += current_duration
@@ -586,12 +583,10 @@ def api_room_attention():
                     if entry["state"] in [ATTENTIVE, ACTIVE]:
                         attentive_time += duration
             
-            # Calculate current duration in seconds - convert timestamps from ms to seconds
             state_since = user_data.get("state_since", current_timestamp)
             current_duration = (current_timestamp - state_since) / 1000.0
             
             if current_duration < 0:
-                # Handle potential clock skew
                 current_duration = 0
                 
             total_time += current_duration

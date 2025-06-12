@@ -20,7 +20,6 @@ const JoinRoom = () => {
   const isInstructor = user?.role === 'instructor';
   
   useEffect(() => {
-    // If user is an instructor, redirect to home page
     if (user && isInstructor) {
       addNotification('Instructors cannot join rooms. Please create a room instead.', 'warning');
       navigate('/');
@@ -89,7 +88,6 @@ const JoinRoom = () => {
       return;
     }
     
-    // Get display name from user object if authenticated, otherwise use "Anonymous"
     const displayName = user?.name || 'Anonymous';
     
     console.log('Joining room with data:', {
@@ -114,7 +112,6 @@ const JoinRoom = () => {
         console.log('Auto-joining room:', roomId);
         setRoomJoinAttempted(true);
         
-        // Use authenticated user name from server if available
         const displayName = user?.name || 'Anonymous';
         
         joinRoom({

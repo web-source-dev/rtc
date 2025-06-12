@@ -515,16 +515,13 @@ io.on('connection', (socket) => {
       
       console.log(`Room created: ${roomId} by user ${currentUser.id} with name "${currentUser.displayName}"`);
 
-      // After successful room creation
       try {
-        // Try to find the user, but don't require it
         let user = null;
         
         if (socket.user && socket.user.userId) {
           user = await User.findOne({ userId: socket.user.userId });
         }
         
-        // Create a new meeting record regardless of user role
         const meeting = new Meeting({
           roomId: roomId,
           title: title || 'Untitled Class',
@@ -535,7 +532,6 @@ io.on('connection', (socket) => {
           isActive: true
         });
         
-        // Add the room creator as the first participant
         meeting.participants.push({
           userId: socket.id,
           name: currentUser.displayName || 'Anonymous',
@@ -645,15 +641,13 @@ io.on('connection', (socket) => {
       socket.join(roomId);
       currentUser.room = roomId;
     
-      // Send comprehensive participant information including display names
       const participantsToSend = room.participants
-        .filter(p => p.id !== socket.id) // Don't include the joining user
+        .filter(p => p.id !== socket.id)
         .map(p => ({
           id: p.id,
-          displayName: p.displayName || 'Anonymous' // Ensure display name is provided
+          displayName: p.displayName || 'Anonymous'
         }));
       
-      // Add joining user to room participants
       const existingParticipant = room.participants.find(p => p.id === socket.id);
       if (!existingParticipant) {
         room.participants.push({
@@ -668,13 +662,11 @@ io.on('connection', (socket) => {
         isPasswordProtected: !!room.password
       });
       
-      // Notify all other users in the room
       socket.to(roomId).emit('user-joined', {
         userId: socket.id,
         displayName: currentUser.displayName || 'Anonymous'
       });
       
-      // Also send user-updated event to ensure display names propagate
       socket.to(roomId).emit('user-updated', {
         userId: socket.id,
         displayName: currentUser.displayName || 'Anonymous'
@@ -694,18 +686,15 @@ io.on('connection', (socket) => {
       
       console.log(`User ${socket.id} joined room ${roomId}`);
 
-      // After successful room join
       try {
         const meeting = await Meeting.findOne({ roomId });
         
         if (meeting) {
-          // Check if participant already exists
           let participant = meeting.participants.find(p => p.userId === socket.id);
           
           if (!participant) {
             console.log(`Adding new participant ${socket.id} to meeting ${roomId}`);
             
-            // Create a new participant record
             meeting.participants.push({
               userId: socket.id,
               name: currentUser.displayName || 'Anonymous',
@@ -727,13 +716,11 @@ io.on('connection', (socket) => {
             console.log(`Added participant ${socket.id} to meeting ${roomId}`);
           } else {
             console.log(`Participant ${socket.id} already exists in meeting ${roomId}`);
-            
-            // Update existing participant if needed
+
             if (!participant.joinTime) {
               participant.joinTime = new Date();
             }
             
-            // If participant has a leave time (rejoining), update it
             if (participant.leaveTime) {
               console.log(`Participant ${socket.id} is rejoining, clearing leave time`);
               participant.leaveTime = null;
@@ -780,11 +767,9 @@ io.on('connection', (socket) => {
       return;
     }
 
-      // Update display name if provided
       if (displayName) {
         currentUser.displayName = displayName;
         
-        // Update participant in room
         const room = rooms[roomId];
         if (room) {
           const participant = room.participants.find(p => p.id === socket.id);
@@ -794,19 +779,16 @@ io.on('connection', (socket) => {
       }
     }
     
-      // Broadcast to all participants in the room
     socket.to(roomId).emit('user-ready', {
       userId: socket.id,
         displayName: currentUser.displayName || 'Anonymous'
     });
       
-      // Also explicitly broadcast as user-updated event to ensure display names propagate
       socket.to(roomId).emit('user-updated', {
         userId: socket.id,
         displayName: currentUser.displayName || 'Anonymous'
       });
-      
-      // For each existing participant, send an offer
+
       const room = rooms[roomId];
       if (room) {
         room.participants.forEach(participant => {
@@ -1101,12 +1083,10 @@ io.on('connection', (socket) => {
         }
       }
 
-      // Update meeting record
       try {
         const meeting = await Meeting.findOne({ roomId });
         
-        if (meeting) {
-          // Update participant leave time atomically
+        if (meeting) {        
           await Meeting.updateOne(
             { 
               roomId, 
@@ -1152,7 +1132,6 @@ io.on('connection', (socket) => {
     }
   });
 
-  // When attention data is received, save to meeting record
   socket.on('attention-data', async (data) => {
     try {
       const roomId = data.roomId || currentUser.room;
@@ -1167,14 +1146,11 @@ io.on('connection', (socket) => {
         return;
       }
       
-      // Make sure the attention data is properly formatted
       const attentionData = data.attentionData || {};
       
-      // Log the received data
       console.log(`Received attention data for room ${roomId}:`, 
         Object.keys(attentionData).map(id => `${id}: ${attentionData[id]?.attentionState || 'unknown'}`).join(', '));
       
-      // Save the attention data snapshot
       if (Object.keys(attentionData).length > 0) {
         const result = await meeting.saveAttentionSnapshot(attentionData);
         if (result) {
@@ -1190,7 +1166,6 @@ io.on('connection', (socket) => {
     }
   });
 
-  // When a room is closed, update the meeting record
   socket.on('close-room', async (data) => {
     try {
       const roomId = data?.roomId || currentUser.room;
@@ -1201,11 +1176,9 @@ io.on('connection', (socket) => {
       
       console.log(`Closing room ${roomId} and finalizing meeting records`);
       
-      // Update meeting record with end time and mark as inactive
       const meeting = await Meeting.findOne({ roomId });
       
       if (meeting) {
-        // Set the end time (only if not already set)
         if (!meeting.endTime) {
           await Meeting.updateOne(
             { _id: meeting._id },
@@ -1222,7 +1195,6 @@ io.on('connection', (socket) => {
           console.log(`Meeting ${meeting._id} already has an end time set`);
         }
         
-        // Set leave time for participants who haven't left yet
         const bulkOps = [];
         let participantsUpdated = 0;
         
@@ -1250,7 +1222,6 @@ io.on('connection', (socket) => {
           console.log(`Set leave time for ${participantsUpdated} participants in meeting ${meeting._id}`);
         }
         
-        // Calculate final stats
         try {
           await meeting.calculateStats();
           console.log(`Calculated final stats for meeting ${meeting._id}`);
@@ -1262,8 +1233,7 @@ io.on('connection', (socket) => {
       } else {
         console.log(`No meeting found for room ${roomId}`);
       }
-      
-      // Remove room from memory if it exists
+                        
       if (rooms[roomId]) {
         delete rooms[roomId];
         console.log(`Removed room ${roomId} from memory`);

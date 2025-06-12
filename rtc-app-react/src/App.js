@@ -25,7 +25,6 @@ import InstructorDashboard from './components/instructor/InstructorDashboard';
 import MeetingAnalytics from './components/instructor/MeetingAnalytics';
 import { useAuth } from './context/AuthContext';
 
-// Define a protected route component specifically for instructors
 const InstructorRoute = ({ children }) => {
   const { isAuthenticated, user } = useAuth();
   
@@ -86,7 +85,6 @@ const AppContent = () => {
               <Route path="/room/:roomId" element={<VideoChat />} />
             </Route>
             
-            {/* Instructor Dashboard Routes */}
             <Route 
               path="/instructor/dashboard" 
               element={

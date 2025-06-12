@@ -186,7 +186,6 @@ export const SocketContextProvider = ({ children }) => {
       
       peerConnection.onicecandidate = (event) => {
         if (event.candidate && socket) {
-          // Prioritize user context for display name
           const myDisplayName = user?.name || localStorage.getItem('displayName') || 'Anonymous';
           
           socket.emit('ice-candidate', {
@@ -301,15 +300,12 @@ export const SocketContextProvider = ({ children }) => {
     setRoomId(createdRoomId);
     setIsRoomCreator(true);
     
-    // Clear any previous participants
     setParticipants([]);
     
-    // Add the participants from the room with their correct display names
     if (roomParticipants && Array.isArray(roomParticipants)) {
       console.log('Room participants:', roomParticipants);
       
       setParticipants(roomParticipants.map(p => {
-        // Ensure we have valid display names for all participants
         const displayName = p.displayName || 'Anonymous';
         console.log(`Adding participant ${p.id} with name "${displayName}"`);
         
@@ -321,7 +317,6 @@ export const SocketContextProvider = ({ children }) => {
     }));
     }
     
-    // Store room info in session storage for potential reconnection
     sessionStorage.setItem('rtc_room_id', createdRoomId);
     sessionStorage.setItem('rtc_room_creator', 'true');
     
@@ -332,10 +327,8 @@ export const SocketContextProvider = ({ children }) => {
     stopLoading();
     addNotification(`Room created: ${createdRoomId}`, 'success');
     
-    // Add system message to chat
     addSystemMessage(`You created room ${createdRoomId}`);
     
-    // Make sure my display name is properly set
     const myDisplayName = user?.name || localStorage.getItem('displayName') || 'Anonymous';
     socket.emit('user-joined', {
       displayName: myDisplayName
@@ -355,15 +348,12 @@ export const SocketContextProvider = ({ children }) => {
     setRoomId(joinedRoomId);
     setIsRoomCreator(false);
     
-    // Clear any previous participants
     setParticipants([]);
     
-    // Add the participants from the room with their correct display names
     if (roomParticipants && Array.isArray(roomParticipants)) {
       console.log('Room participants:', roomParticipants);
       
       setParticipants(roomParticipants.map(p => {
-        // Ensure we have valid display names for all participants
         const displayName = p.displayName || 'Anonymous';
         console.log(`Adding participant ${p.id} with name "${displayName}"`);
         
@@ -375,16 +365,13 @@ export const SocketContextProvider = ({ children }) => {
       }));
     }
     
-    // Store room info in session storage for potential reconnection
     sessionStorage.setItem('rtc_room_id', joinedRoomId);
     
     stopLoading();
     addNotification(`Joined room: ${joinedRoomId}`, 'success');
     
-    // Add system message to chat
     addSystemMessage(`You joined room ${joinedRoomId}`);
     
-    // Broadcast my display name to all participants
     const myDisplayName = user?.name || localStorage.getItem('displayName') || 'Anonymous';
     socket.emit('user-joined', {
       displayName: myDisplayName
@@ -397,8 +384,7 @@ export const SocketContextProvider = ({ children }) => {
     setParticipants(prev => {
       const existingParticipant = prev.find(p => p.id === userId);
       
-      if (existingParticipant) {
-        // Update the existing participant's display name if it's provided and different
+      if (existingParticipant) {  
         if (displayName && existingParticipant.displayName !== displayName) {
           console.log(`Updating existing participant ${userId} name to "${displayName}"`);
           return prev.map(p => 
@@ -722,7 +708,6 @@ export const SocketContextProvider = ({ children }) => {
       
       await peerConnection.setLocalDescription(answer);
       
-      // Prioritize user context for display name
       const myDisplayName = user?.name || localStorage.getItem('displayName') || 'Anonymous';
       
       if (socket) {
@@ -1229,7 +1214,6 @@ export const SocketContextProvider = ({ children }) => {
   const createRoom = (options = {}) => {
     if (!socket) return;
     
-    // Check if user is an instructor
     if (user && user.role !== 'instructor') {
       addNotification('Only instructors can create rooms', 'error');
       return;
@@ -1260,7 +1244,6 @@ export const SocketContextProvider = ({ children }) => {
       return;
     }
     
-    // Check if user is an instructor - instructors cannot join rooms
     if (user && user.role === 'instructor') {
       setAppError(
         ERROR_TYPES.ROOM_CONNECTION,
@@ -1335,7 +1318,6 @@ export const SocketContextProvider = ({ children }) => {
   const sendChatMessage = (text) => {
     if (!socket || !text.trim()) return;
     
-    // Prioritize user context for display name, fall back to localStorage
     const displayName = user?.name || localStorage.getItem('displayName') || 'Anonymous';
     
     socket.emit('chat-message', { 
@@ -1351,7 +1333,6 @@ export const SocketContextProvider = ({ children }) => {
   const readyForConnections = () => {
     if (!socket || !roomId) return;
     
-    // Get display name from user context if available
     const displayName = user?.name || localStorage.getItem('displayName') || 'Anonymous';
     console.log(`Sending ready signal with display name: "${displayName}"`);
     
@@ -1410,24 +1391,20 @@ export const SocketContextProvider = ({ children }) => {
     updateParticipantStream(userId, stream, normalizedName);
   }, [updateParticipantStream]);
 
-  // Add this function to send attention data to the server
   const sendAttentionData = (data) => {
     if (!socket || !roomId) {
       console.warn('Cannot send attention data - socket or roomId missing');
       return;
     }
     
-    // Handle both the old format (direct data object) and new format (with roomId field)
     const roomIdToSend = data.roomId || roomId;
     const attentionData = data.attentionData || data;
     
-    // Make sure we have data to send
     if (!attentionData || Object.keys(attentionData).length === 0) {
       console.warn('No attention data to send');
       return;
     }
-    
-    // Send to server
+      
     try {
       socket.emit('attention-data', { 
         roomId: roomIdToSend,

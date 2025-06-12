@@ -1,9 +1,4 @@
-/**
- * Sound Manager Utility
- * Handles loading, playing, and managing audio notifications with error resilience
- */
 
-// Default sound URL paths
 const SOUND_PATHS = {
   info: '/sounds/info.mp3',
   success: '/sounds/success.mp3',
@@ -12,50 +7,38 @@ const SOUND_PATHS = {
   default: '/sounds/notification.mp3'
 };
 
-// Sound fallback priorities (if a specific sound fails to load)
 const FALLBACK_ORDER = ['default', 'info', 'warning', 'success', 'danger'];
 
-// Cache for preloaded audio elements
 let audioCache = {};
 let audioLoaded = {};
 let masterEnabled = true;
 
-/**
- * Initialize the sound manager and preload sounds
- * @returns {Promise} Promise that resolves when sounds are loaded or fails gracefully
- */
 export const initSounds = async () => {
   try {
-    // Check if sounds are enabled in localStorage
     const savedPref = localStorage.getItem('alertSoundEnabled');
     masterEnabled = savedPref === null ? true : (savedPref === 'true');
     
-    // Try to create audio elements for all sounds
     const loadPromises = Object.entries(SOUND_PATHS).map(([key, path]) => {
       return new Promise((resolve) => {
         const audio = new Audio();
         
-        // Handle successful load
         audio.addEventListener('canplaythrough', () => {
           audioLoaded[key] = true;
           console.log(`Sound loaded: ${key}`);
           resolve(true);
         });
         
-        // Handle failed load
         audio.addEventListener('error', () => {
           console.warn(`Failed to load sound: ${key}`);
           resolve(false);
         });
         
-        // Start loading
         audio.src = path;
         audio.load();
         audioCache[key] = audio;
       });
     });
     
-    // Wait for all sounds to attempt loading
     await Promise.allSettled(loadPromises);
     
     console.log('Sound manager initialized');
@@ -66,21 +49,14 @@ export const initSounds = async () => {
   }
 };
 
-/**
- * Play a notification sound with fallbacks if the requested sound fails
- * @param {string} type - Sound type to play (info, success, warning, danger, default)
- * @returns {Promise} Promise that resolves when sound plays or fails gracefully
- */
 export const playSound = async (type = 'default') => {
   if (!masterEnabled) return false;
   
-  try {
-    // If audio not initialized, try to initialize
+  try { 
     if (Object.keys(audioCache).length === 0) {
       await initSounds();
     }
     
-    // Try to play the requested sound first
     if (audioLoaded[type] && audioCache[type]) {
       const audio = audioCache[type];
       audio.currentTime = 0;
@@ -93,7 +69,6 @@ export const playSound = async (type = 'default') => {
       }
     }
     
-    // If requested sound failed, try fallbacks in order
     for (const fallbackType of FALLBACK_ORDER) {
       if (fallbackType !== type && audioLoaded[fallbackType] && audioCache[fallbackType]) {
         try {
@@ -107,7 +82,6 @@ export const playSound = async (type = 'default') => {
       }
     }
     
-    // All attempts failed
     return false;
   } catch (error) {
     console.error('Error in playSound:', error);
@@ -115,10 +89,6 @@ export const playSound = async (type = 'default') => {
   }
 };
 
-/**
- * Enable or disable all sounds
- * @param {boolean} enabled - Whether sounds should be enabled
- */
 export const setSoundEnabled = (enabled) => {
   try {
     masterEnabled = enabled;
@@ -128,17 +98,11 @@ export const setSoundEnabled = (enabled) => {
   }
 };
 
-/**
- * Check if sounds are currently enabled
- * @returns {boolean} Whether sounds are enabled
- */
 export const isSoundEnabled = () => {
   return masterEnabled;
 };
 
-/**
- * Clean up sound resources
- */
+
 export const cleanupSounds = () => {
   try {
     Object.values(audioCache).forEach(audio => {
@@ -154,7 +118,6 @@ export const cleanupSounds = () => {
   }
 };
 
-// Initialize sounds when module is imported
 initSounds().catch(console.error);
 
 export default {

@@ -4,7 +4,6 @@ const Meeting = require('../models/Meeting');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
 
-// Middleware to check if user is an instructor
 const isInstructor = async (req, res, next) => {
   try {
     if (req.user && req.user.role === 'instructor') {
@@ -23,12 +22,11 @@ const isInstructor = async (req, res, next) => {
   }
 };
 
-// Get all meetings for the logged in instructor
 router.get('/', auth, isInstructor, async (req, res) => {
   try {
     const meetings = await Meeting.find({ creator: req.user.id })
       .sort({ startTime: -1 })
-      .select('-attentionSnapshots'); // Exclude the large snapshots array
+      .select('-attentionSnapshots');
 
     res.status(200).json({
       success: true,
@@ -43,7 +41,6 @@ router.get('/', auth, isInstructor, async (req, res) => {
   }
 });
 
-// Get a single meeting by ID
 router.get('/:id', auth, isInstructor, async (req, res) => {
   try {
     const meeting = await Meeting.findById(req.params.id);
@@ -55,7 +52,6 @@ router.get('/:id', auth, isInstructor, async (req, res) => {
       });
     }
     
-    // Ensure the user owns this meeting
     if (meeting.creator.toString() !== req.user.id) {
       return res.status(403).json({
         success: false,
@@ -76,7 +72,6 @@ router.get('/:id', auth, isInstructor, async (req, res) => {
   }
 });
 
-// Get meeting analytics by ID
 router.get('/:id/analytics', auth, isInstructor, async (req, res) => {
   try {
     const meeting = await Meeting.findById(req.params.id);
@@ -88,7 +83,6 @@ router.get('/:id/analytics', auth, isInstructor, async (req, res) => {
       });
     }
     
-    // Ensure the user owns this meeting
     if (meeting.creator.toString() !== req.user.id) {
       return res.status(403).json({
         success: false,
@@ -96,34 +90,29 @@ router.get('/:id/analytics', auth, isInstructor, async (req, res) => {
       });
     }
 
-    // Calculate meeting duration safely
     let duration = 0;
     if (meeting.startTime) {
       if (meeting.endTime) {
-        // Completed meeting
         const endTime = new Date(meeting.endTime);
         const startTime = new Date(meeting.startTime);
         
         if (!isNaN(endTime.getTime()) && !isNaN(startTime.getTime())) {
           duration = Math.max(0, Math.floor((endTime - startTime) / 1000));
           
-          // Cap duration to reasonable maximum (7 days)
-          const MAX_DURATION = 7 * 24 * 60 * 60; // 7 days in seconds
+          const MAX_DURATION = 7 * 24 * 60 * 60;
           if (duration > MAX_DURATION) {
             console.warn(`Meeting ${meeting._id} has excessive duration: ${duration}s. Capping to ${MAX_DURATION}s`);
             duration = MAX_DURATION;
           }
         }
-      } else {
-        // Ongoing meeting
+      } else {    
         const now = new Date();
         const startTime = new Date(meeting.startTime);
         
         if (!isNaN(startTime.getTime())) {
           duration = Math.max(0, Math.floor((now - startTime) / 1000));
           
-          // Cap duration to reasonable maximum (7 days)
-          const MAX_DURATION = 7 * 24 * 60 * 60; // 7 days in seconds
+          const MAX_DURATION = 7 * 24 * 60 * 60;
           if (duration > MAX_DURATION) {
             console.warn(`Meeting ${meeting._id} has excessive duration: ${duration}s. Capping to ${MAX_DURATION}s`);
             duration = MAX_DURATION;
@@ -132,7 +121,6 @@ router.get('/:id/analytics', auth, isInstructor, async (req, res) => {
       }
     }
     
-    // Initialize default attention states if missing
     const defaultStates = {
       attentive: 0,
       active: 0,
@@ -143,10 +131,8 @@ router.get('/:id/analytics', auth, isInstructor, async (req, res) => {
       darkness: 0
     };
 
-    // Deep copy to prevent reference issues
     const attentionStates = { ...defaultStates };
     
-    // Process and prepare analytics data
     const analytics = {
       overview: meeting.overallStats || {
         totalParticipants: meeting.participants.length,
@@ -163,15 +149,11 @@ router.get('/:id/analytics', auth, isInstructor, async (req, res) => {
       timeSeriesData: processTimeSeriesData(meeting.attentionSnapshots || [])
     };
     
-    // Process participant data with validation
     analytics.participantData = meeting.participants.map(p => {
-      // Ensure all attention data fields exist
       const attentionData = { ...defaultStates, ...(p.attentionData || {}) };
       
-      // Calculate attention percentage safely
       const attentionPercentage = calculateAttentionPercentage(attentionData);
       
-      // Add to state totals
       Object.keys(attentionData).forEach(state => {
         if (analytics.attentionStates[state] !== undefined) {
           const value = attentionData[state] || 0;
@@ -179,7 +161,6 @@ router.get('/:id/analytics', auth, isInstructor, async (req, res) => {
         }
       });
       
-      // Calculate total time for this participant
       const totalSeconds = Object.values(attentionData).reduce((sum, val) => sum + (typeof val === 'number' ? val : 0), 0);
       
       return {
@@ -206,17 +187,14 @@ router.get('/:id/analytics', auth, isInstructor, async (req, res) => {
   }
 });
 
-// Helper function to calculate attention percentage
 function calculateAttentionPercentage(attentionData) {
   if (!attentionData) return 0;
   
-  // Validate input - ensure we have an object with numeric values
   const validData = {};
   
-  // Copy only numeric values to our valid data object
   Object.keys(attentionData).forEach(key => {
     if (typeof attentionData[key] === 'number' && !isNaN(attentionData[key])) {
-      validData[key] = Math.max(0, attentionData[key]); // Ensure non-negative
+      validData[key] = Math.max(0, attentionData[key]);
     } else {
       validData[key] = 0;
     }
@@ -228,31 +206,25 @@ function calculateAttentionPercentage(attentionData) {
   const attentiveTime = (validData.attentive || 0) + (validData.active || 0);
   const percentage = (attentiveTime / totalTime) * 100;
   
-  // Cap percentage at 100% and ensure it's non-negative
   return Math.min(100, Math.max(0, percentage));
 }
 
-// Helper function to process time series data for charts
 function processTimeSeriesData(snapshots) {
   if (!snapshots || !Array.isArray(snapshots) || snapshots.length === 0) return [];
   
-  // Group snapshots by timestamp (rounded to nearest minute)
   const groupedByTime = {};
   
-  // Set a limit to prevent processing too many snapshots
   const MAX_SNAPSHOTS = 5000;
   const snapshotsToProcess = snapshots.slice(-MAX_SNAPSHOTS);
   
   console.log(`Processing ${snapshotsToProcess.length} snapshots for time series data (of ${snapshots.length} total)`);
   
-  // States we'll track
   const validStates = [
     'attentive', 'active', 'looking_away', 'drowsy', 'sleeping', 'absent', 'darkness'
   ];
   
   snapshotsToProcess.forEach(snapshot => {
     try {
-      // Skip invalid snapshots
       if (!snapshot || !snapshot.timestamp) return;
       
       let timestamp;
@@ -267,12 +239,10 @@ function processTimeSeriesData(snapshots) {
         return;
       }
       
-      // Round to minute to reduce data points
       timestamp.setSeconds(0, 0);
       const timeKey = timestamp.toISOString();
       
       if (!groupedByTime[timeKey]) {
-        // Initialize with all states at 0
         const newPoint = { timestamp: timeKey, total: 0 };
         validStates.forEach(state => {
           newPoint[state] = 0;
@@ -280,25 +250,20 @@ function processTimeSeriesData(snapshots) {
         groupedByTime[timeKey] = newPoint;
       }
       
-      // Normalize the state
       const state = snapshot.attentionState || 'unknown';
       
-      // Only count known states
       if (validStates.includes(state)) {
         groupedByTime[timeKey][state] += 1;
         groupedByTime[timeKey].total += 1;
       }
     } catch (error) {
       console.warn('Error processing snapshot:', error);
-      // Continue processing other snapshots
     }
   });
   
-  // Convert to array and sort by timestamp
   const sortedData = Object.values(groupedByTime)
     .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
   
-  // Convert counts to percentages
   return sortedData.map(point => {
     const result = { timestamp: point.timestamp };
     
@@ -307,7 +272,6 @@ function processTimeSeriesData(snapshots) {
         result[state] = Math.min(100, Math.max(0, (point[state] / point.total) * 100));
       });
     } else {
-      // If no data, set all states to 0
       validStates.forEach(state => {
         result[state] = 0;
       });

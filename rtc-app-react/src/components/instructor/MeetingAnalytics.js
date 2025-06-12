@@ -22,7 +22,6 @@ import { useAuth } from '../../context/AuthContext';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title, Filler } from 'chart.js';
 import { Pie, Bar, Line } from 'react-chartjs-2';
 
-// Register ChartJS components
 ChartJS.register(
   ArcElement, 
   Tooltip, 
@@ -47,21 +46,18 @@ const MeetingAnalytics = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   
-  // Redirect if user is not an instructor
   useEffect(() => {
     if (user && user.role !== 'instructor') {
       navigate('/');
     }
   }, [user, navigate]);
   
-  // Fetch meeting and analytics data
   useEffect(() => {
     const fetchMeetingData = async () => {
       setIsLoading(true);
       setError(null);
       
       try {
-        // Fetch meeting details
         const meetingResponse = await fetch(`/api/meetings/${id}`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -76,7 +72,6 @@ const MeetingAnalytics = () => {
         const meetingData = await meetingResponse.json();
         setMeeting(meetingData.data);
         
-        // Fetch analytics
         const analyticsResponse = await fetch(`/api/meetings/${id}/analytics`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -102,7 +97,6 @@ const MeetingAnalytics = () => {
     fetchMeetingData();
   }, [id]);
   
-  // Helper function to format date
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString(undefined, {
@@ -112,7 +106,6 @@ const MeetingAnalytics = () => {
     });
   };
   
-  // Helper function to format time
   const formatTime = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleTimeString(undefined, {
@@ -121,13 +114,11 @@ const MeetingAnalytics = () => {
     });
   };
   
-  // Format duration in seconds to human readable format
   const formatDuration = (seconds) => {
     if (!seconds || isNaN(seconds) || seconds < 0) {
       return '0s';
     }
     
-    // Cap at 2 hours to prevent unreasonable values
     const MAX_DURATION = 2 * 60 * 60;
     if (seconds > MAX_DURATION) {
       seconds = MAX_DURATION;
@@ -151,7 +142,6 @@ const MeetingAnalytics = () => {
     return result.trim();
   };
   
-  // Format percentage with 2 decimal places
   const formatPercentage = (value) => {
     if (typeof value !== 'number' || isNaN(value)) {
       return '0%';
@@ -159,7 +149,6 @@ const MeetingAnalytics = () => {
     return `${Math.min(100, Math.max(0, value)).toFixed(2)}%`;
   };
   
-  // Get attention state icon
   const getAttentionStateIcon = (state) => {
     switch (state) {
       case 'attentive':
@@ -181,7 +170,6 @@ const MeetingAnalytics = () => {
     }
   };
   
-  // Get color for attention state
   const getAttentionStateColor = (state) => {
     switch (state) {
       case 'attentive':
@@ -203,7 +191,6 @@ const MeetingAnalytics = () => {
     }
   };
   
-  // Format state name for display
   const formatStateName = (state) => {
     if (!state) return 'Unknown';
     
@@ -231,7 +218,6 @@ const MeetingAnalytics = () => {
     }
   };
   
-  // Prepare chart data for attention distribution
   const prepareAttentionDistributionData = () => {
     if (!analytics) return null;
     
@@ -253,7 +239,6 @@ const MeetingAnalytics = () => {
     };
   };
   
-  // Prepare time series data for attention over time
   const prepareTimeSeriesData = () => {
     if (!analytics || !analytics.timeSeriesData || analytics.timeSeriesData.length === 0) {
       return null;
@@ -287,20 +272,16 @@ const MeetingAnalytics = () => {
     };
   };
   
-  // Prepare participant data for bar chart
   const prepareParticipantData = () => {
     if (!analytics || !analytics.participantData || analytics.participantData.length === 0) {
       return null;
     }
     
-    // Sort participants by attention percentage
     const sortedParticipants = [...analytics.participantData]
       .sort((a, b) => b.attentionPercentage - a.attentionPercentage);
     
     const labels = sortedParticipants.map(p => p.name);
     const data = sortedParticipants.map(p => p.attentionPercentage);
-    
-    // Determine colors based on attention percentage
     const backgroundColor = data.map(value => {
       if (value >= 70) return 'rgba(40, 167, 69, 0.8)';
       if (value >= 40) return 'rgba(255, 193, 7, 0.8)';
@@ -321,7 +302,6 @@ const MeetingAnalytics = () => {
     };
   };
   
-  // Calculate total times for each state across all participants
   const calculateTotalTimes = () => {
     if (!analytics || !analytics.participantData) return {};
     
@@ -330,17 +310,15 @@ const MeetingAnalytics = () => {
     
     states.forEach(state => {
       totals[state] = analytics.participantData.reduce((sum, participant) => {
-        // Ensure we're adding a valid number
         const stateValue = participant.attentionData?.[state];
         if (typeof stateValue === 'number' && !isNaN(stateValue)) {
-          return sum + Math.max(0, stateValue); // Ensure non-negative
+          return sum + Math.max(0, stateValue);
         }
         return sum;
       }, 0);
     });
     
-    // Cap extremely large values
-    const MAX_SECONDS = 24 * 60 * 60; // 24 hours
+    const MAX_SECONDS = 24 * 60 * 60;
     Object.keys(totals).forEach(state => {
       if (totals[state] > MAX_SECONDS) {
         console.warn(`Capping excessive ${state} time: ${totals[state]}s -> ${MAX_SECONDS}s`);
@@ -356,25 +334,20 @@ const MeetingAnalytics = () => {
   const participantData = prepareParticipantData();
   const totalTimes = calculateTotalTimes();
   
-  // Export analytics to CSV
   const exportToCSV = () => {
     if (!analytics || !meeting) return;
     
-    // Create CSV content
     let csvContent = "data:text/csv;charset=utf-8,";
     
-    // Add header row
     csvContent += "Meeting Analytics: " + meeting.title + "\r\n";
     csvContent += "Date: " + formatDate(meeting.startTime) + "\r\n";
     csvContent += "Time: " + formatTime(meeting.startTime) + " - " + (meeting.endTime ? formatTime(meeting.endTime) : "Ongoing") + "\r\n\r\n";
     
-    // Overall stats
     csvContent += "OVERALL STATISTICS\r\n";
     csvContent += "Total Participants," + analytics.participantCount + "\r\n";
     csvContent += "Average Attention," + (analytics.overview.averageAttention || 0).toFixed(2) + "%\r\n";
     csvContent += "Duration," + formatDuration(analytics.duration) + "\r\n\r\n";
     
-    // Attention state totals
     csvContent += "ATTENTION STATES (SECONDS)\r\n";
     csvContent += "Attentive," + (totalTimes.attentive || 0) + "\r\n";
     csvContent += "Active," + (totalTimes.active || 0) + "\r\n";
@@ -384,7 +357,6 @@ const MeetingAnalytics = () => {
     csvContent += "Absent," + (totalTimes.absent || 0) + "\r\n";
     csvContent += "Darkness," + (totalTimes.darkness || 0) + "\r\n\r\n";
     
-    // Participant data
     csvContent += "PARTICIPANT DATA\r\n";
     csvContent += "Name,Attention %,Join Time,Leave Time,Attentive (s),Active (s),Looking Away (s),Drowsy (s),Sleeping (s),Absent (s),Darkness (s)\r\n";
     
@@ -407,14 +379,12 @@ const MeetingAnalytics = () => {
       ].join(",") + "\r\n";
     });
     
-    // Create download link
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
     link.setAttribute("download", `meeting_analytics_${meeting._id}.csv`);
     document.body.appendChild(link);
     
-    // Trigger download
     link.click();
     document.body.removeChild(link);
   };
@@ -497,7 +467,6 @@ const MeetingAnalytics = () => {
   
   return (
     <div className="d-flex flex-column min-vh-100" style={{ backgroundColor: '#323248' }}>
-      {/* Header */}
       <header className="p-3" style={{ backgroundColor: '#252536', borderBottom: '1px solid #454564' }}>
         <div className="container">
           <div className="d-flex justify-content-between align-items-center">
@@ -530,9 +499,7 @@ const MeetingAnalytics = () => {
         </div>
       </header>
       
-      {/* Main content */}
       <main className="container py-4 flex-grow-1">
-        {/* Meeting info */}
         <div className="card mb-4" style={{ backgroundColor: '#252536', borderColor: '#454564' }}>
           <div className="card-body">
             <div className="row">
@@ -570,7 +537,6 @@ const MeetingAnalytics = () => {
           </div>
         </div>
         
-        {/* Navigation tabs */}
         <ul className="nav nav-tabs mb-4">
           <li className="nav-item">
             <button 
@@ -613,7 +579,6 @@ const MeetingAnalytics = () => {
           </li>
         </ul>
         
-        {/* Overview Tab */}
         {selectedTab === 'overview' && (
           <div>
             <div className="row mb-4">
@@ -763,7 +728,6 @@ const MeetingAnalytics = () => {
           </div>
         )}
         
-        {/* Timeline Tab */}
         {selectedTab === 'timeline' && (
           <div className="card" style={{ backgroundColor: '#252536', borderColor: '#454564' }}>
             <div className="card-header" style={{ borderColor: '#454564' }}>
@@ -829,7 +793,6 @@ const MeetingAnalytics = () => {
           </div>
         )}
         
-        {/* Participants Tab */}
         {selectedTab === 'participants' && (
           <div className="card" style={{ backgroundColor: '#252536', borderColor: '#454564' }}>
             <div className="card-header" style={{ borderColor: '#454564' }}>
@@ -856,7 +819,6 @@ const MeetingAnalytics = () => {
                   </thead>
                   <tbody>
                     {analytics.participantData.map((participant, index) => {
-                      // Calculate participant total time from attentionData or use totalTime if available
                       const totalTime = participant.totalTime || 
                         Object.values(participant.attentionData || {}).reduce(
                           (sum, val) => sum + (typeof val === 'number' && !isNaN(val) ? Math.max(0, val) : 0), 
@@ -886,7 +848,6 @@ const MeetingAnalytics = () => {
         )}
       </main>
       
-      {/* Footer */}
       <footer className="py-3 text-center" style={{ backgroundColor: '#252536', borderTop: '1px solid #454564', color: '#adb5bd' }}>
         <div className="container">
           <p className="mb-0 small">

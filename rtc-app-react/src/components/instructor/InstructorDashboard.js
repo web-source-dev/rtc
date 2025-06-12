@@ -20,20 +20,18 @@ const InstructorDashboard = () => {
   const [meetings, setMeetings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeFilter, setActiveFilter] = useState('all'); // 'all', 'active', 'completed'
+  const [activeFilter, setActiveFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   
   const { user } = useAuth();
   const navigate = useNavigate();
   
-  // Redirect if user is not an instructor
   useEffect(() => {
     if (user && user.role !== 'instructor') {
       navigate('/');
     }
   }, [user, navigate]);
   
-  // Fetch meetings
   const fetchMeetings = async () => {
     setIsLoading(true);
     setError(null);
@@ -64,13 +62,10 @@ const InstructorDashboard = () => {
     fetchMeetings();
   }, []);
   
-  // Filter and search meetings
   const filteredMeetings = meetings.filter(meeting => {
-    // Filter by active status
     if (activeFilter === 'active' && !meeting.isActive) return false;
     if (activeFilter === 'completed' && meeting.isActive) return false;
     
-    // Search by title or room ID
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       return (
@@ -82,7 +77,6 @@ const InstructorDashboard = () => {
     return true;
   });
   
-  // Format date
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString(undefined, {
@@ -92,7 +86,6 @@ const InstructorDashboard = () => {
     });
   };
   
-  // Format time
   const formatTime = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleTimeString(undefined, {
@@ -101,23 +94,19 @@ const InstructorDashboard = () => {
     });
   };
   
-  // Calculate class duration in readable format
   const getClassDuration = (startTime, endTime) => {
     if (!endTime) return 'Ongoing';
     
     const start = new Date(startTime);
     const end = new Date(endTime);
     
-    // Ensure both dates are valid
     if (isNaN(start.getTime()) || isNaN(end.getTime())) {
       console.error('Invalid date in getClassDuration:', { startTime, endTime });
       return 'Invalid';
     }
     
-    // Calculate duration in milliseconds
     const durationMs = end.getTime() - start.getTime();
     
-    // Handle case where end time is before start time (should not happen)
     if (durationMs < 0) {
       console.error('End time is before start time:', { startTime, endTime });
       return 'Error';
@@ -135,7 +124,6 @@ const InstructorDashboard = () => {
   
   return (
     <div className="d-flex flex-column min-vh-100" style={{ backgroundColor: '#323248' }}>
-      {/* Header */}
       <header className="p-3" style={{ backgroundColor: '#252536', borderBottom: '1px solid #454564' }}>
         <div className="container">
           <div className="d-flex justify-content-between align-items-center">
@@ -160,7 +148,6 @@ const InstructorDashboard = () => {
         </div>
       </header>
       
-      {/* Main content */}
       <main className="container py-4 flex-grow-1">
         <div className="row mb-4">
           <div className="col-md-8">
@@ -325,7 +312,6 @@ const InstructorDashboard = () => {
         )}
       </main>
       
-      {/* Footer */}
       <footer className="py-3 text-center" style={{ backgroundColor: '#252536', borderTop: '1px solid #454564', color: '#adb5bd' }}>
         <div className="container">
           <p className="mb-0 small">

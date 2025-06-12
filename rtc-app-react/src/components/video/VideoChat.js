@@ -58,8 +58,6 @@ const VideoChat = () => {
   };
   
   useEffect(() => {
-    // If we have session start time from the context, use that to initialize the timer
-    // Otherwise, start at 0
     const sessionStartTime = localStorage.getItem('session_start_time');
     if (sessionStartTime) {
       const startTimeMs = parseInt(sessionStartTime, 10);
@@ -70,11 +68,9 @@ const VideoChat = () => {
         }
       }
     } else {
-      // Store current time as session start if not already set             
       localStorage.setItem('session_start_time', Date.now().toString());
     }
     
-    // Set up the timer to increment by 60 seconds every minute
     timerRef.current = setInterval(() => {
       setClassTime(prev => prev + 60);
     }, 60000);
@@ -97,7 +93,6 @@ const VideoChat = () => {
     if (isChatVisible) setIsChatVisible(false);
   };
   
-  // Memoize the alert component to prevent unnecessary re-renders
   const renderParticipantAlerts = () => {
     if (!effectiveIsRoomCreator || !isMonitoringEnabled) return null;
     
@@ -137,7 +132,6 @@ const VideoChat = () => {
           <HostAttentionPanel onClose={toggleHostPanel} />
         )}
         
-        {/* Show participant state alerts for hosts */}
         {renderParticipantAlerts()}
       </div>
       

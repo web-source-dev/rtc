@@ -20,7 +20,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import soundManager, { isSoundEnabled, setSoundEnabled, playSound } from '../../utils/soundManager';
 
-// Custom styling for the alerts component
 const styles = {
   alertContainer: {
     position: 'fixed',
@@ -155,7 +154,6 @@ const styles = {
   }
 };
 
-// Icons for different attention states
 const getStateIcon = (state) => {
   try {
     switch (state) {
@@ -182,7 +180,6 @@ const getStateIcon = (state) => {
   }
 };
 
-// Background colors for different alert types
 const getAlertTypeStyle = (type) => {
   try {
     switch (type) {
@@ -263,27 +260,19 @@ const ParticipantStateAlert = ({
   
   const previousAlertsCount = React.useRef(alerts.length);
   
-  // Initialize sound manager if needed
   useEffect(() => {
-    // Sound manager is auto-initialized on import
     return () => {
-      // Clean up any resources when component unmounts
       soundManager.cleanupSounds();
     };
   }, []);
   
-  // Play sound notification when new alerts arrive
   useEffect(() => {
     try {
       if (soundEnabled && alerts.length > previousAlertsCount.current && alerts.length > 0) {
-        // Get the most recent alert
         const latestAlert = alerts[0];
         const alertType = latestAlert.alertType || 'info';
         
-        // Use the sound manager to play the appropriate sound
-        // Critical alerts (danger) should be louder/more noticeable
         if (alertType === 'danger') {
-          // Play the sound twice for critical alerts with a small delay between
           playSound(alertType).then(() => {
             setTimeout(() => {
               playSound(alertType).catch(err => console.error('Error playing second alert sound:', err));
@@ -292,7 +281,6 @@ const ParticipantStateAlert = ({
             console.error('Error playing critical notification sound:', err);
           });
         } else {
-          // Regular sound for non-critical alerts
           playSound(alertType).catch(err => {
             console.error('Error playing notification sound:', err);
           });
@@ -305,7 +293,6 @@ const ParticipantStateAlert = ({
     }
   }, [alerts, soundEnabled]);
   
-  // Auto-dismiss old alerts after 15 seconds
   useEffect(() => {
     try {
       const timers = alerts.map(alert => {
@@ -322,14 +309,12 @@ const ParticipantStateAlert = ({
     }
   }, [alerts, onDismiss]);
   
-  // Toggle alert sounds
   const handleToggleSound = useCallback(() => {
     const newState = !soundEnabled;
     setSoundEnabledState(newState);
     setSoundEnabled(newState);
   }, [soundEnabled]);
   
-  // Toggle alerts visibility
   const handleToggleAlerts = useCallback(() => {
     const newState = !isEnabled;
     setIsEnabled(newState);
@@ -338,12 +323,10 @@ const ParticipantStateAlert = ({
     }
   }, [isEnabled, onToggleAlerts]);
   
-  // Toggle history panel
   const handleToggleHistory = useCallback(() => {
     setShowHistory(prev => !prev);
   }, []);
   
-  // Filter alerts by type
   const filteredAlerts = useCallback((alertsList) => {
     try {
       if (filterType === 'all') return alertsList;
@@ -354,10 +337,8 @@ const ParticipantStateAlert = ({
     }
   }, [filterType]);
   
-  // The alerts to display based on current filters
   const visibleAlerts = isEnabled ? filteredAlerts(alerts).slice(0, maxAlerts) : [];
   
-  // If no alerts and alerts are disabled, show a simple toggle button
   if (visibleAlerts.length === 0 && !isEnabled && !showHistory) {
     return (
       <div style={styles.alertContainer}>
@@ -533,7 +514,6 @@ const ParticipantStateAlert = ({
         )}
       </div>
       
-      {/* Alert History Panel */}
       {showHistory && (
         <>
           <div style={styles.overlay} onClick={handleToggleHistory}></div>

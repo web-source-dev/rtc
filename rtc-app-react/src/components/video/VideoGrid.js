@@ -62,7 +62,6 @@ const VideoGrid = ({ participants, localStream }) => {
   const { socket } = useContext(SocketContext);
   const localUserId = socket?.id;
   
-  // Filter out the local user from participants list - they'll be shown separately
   const filteredParticipants = participants.filter(p => {
     if (p.id === localUserId) {
       return false;
@@ -70,7 +69,6 @@ const VideoGrid = ({ participants, localStream }) => {
     return true;
   });
   
-  // Sort participants with active streams first
   const sortedParticipants = [...filteredParticipants].sort((a, b) => {
     if (a.stream && !a.inactive && (!b.stream || b.inactive)) return -1;
     if (b.stream && !b.inactive && (!a.stream || a.inactive)) return 1;
@@ -81,7 +79,6 @@ const VideoGrid = ({ participants, localStream }) => {
     return a.displayName.localeCompare(b.displayName);
   });
   
-  // Debug information for development
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
       console.log("Current participants and their display names:");
@@ -129,7 +126,6 @@ const VideoGrid = ({ participants, localStream }) => {
     };
   }, [sortedParticipants.length]);
   
-  // Calculate grid style based on number of participants
   const gridStyle = {
     display: 'grid',
     gridTemplateColumns: `repeat(${columns}, 1fr)`,
@@ -147,12 +143,10 @@ const VideoGrid = ({ participants, localStream }) => {
       className="all-videos-grid"
       style={gridStyle}
     >
-      {/* Local video display */}
       <AttentionVideoConnector>
         <LocalVideo localStream={localStream} userName="You" />
       </AttentionVideoConnector>
       
-      {/* Active remote participants */}
       {sortedParticipants
         .filter(p => !p.inactive)
         .map(participant => (
@@ -163,7 +157,6 @@ const VideoGrid = ({ participants, localStream }) => {
         ))
       }
       
-      {/* Inactive remote participants */}
       {sortedParticipants
         .filter(p => p.inactive)
         .map(participant => (

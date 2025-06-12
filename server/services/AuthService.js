@@ -18,7 +18,7 @@ const AuthService = {
         email: userData.email,
         password: userData.password,
         name: userData.name,
-        role: userData.role || 'student' // Default to student if role not provided
+        role: userData.role || 'student'
       });
 
       await user.save();

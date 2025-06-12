@@ -18,8 +18,6 @@ export const AttentionProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [previousSyncState, setPreviousSyncState] = useState({ level: 'unknown', dominantState: null });
   
-  // Add state to track previous participant states for change detection
-  const [previousParticipantStates, setPreviousParticipantStates] = useState({});
   
   const captureControlRef = useRef(null);
   const roomIntervalRef = useRef(null);
@@ -49,20 +47,17 @@ export const AttentionProvider = ({ children }) => {
       return;
     }
     
-    // Make sure we have a valid attention state
     if (!attentionResult.attentionState && !attentionResult.state) {
       console.warn('Attention data missing required state field', attentionResult);
       return;
     }
     
-    // Standardize the attention result format
     const standardizedResult = {
       attentionState: attentionResult.attentionState || attentionResult.state,
       timestamp: attentionResult.timestamp || Date.now(),
       confidence: attentionResult.confidence || 100
     };
     
-    // Broadcast to peers via data channels if available
     if (dataChannels) {
       const attentionMessage = {
         type: 'attention',
@@ -82,16 +77,13 @@ export const AttentionProvider = ({ children }) => {
       });
     }
     
-    // Send attention data to server for analytics
     if (socketContext && socketContext.sendAttentionData && isRoomCreator && roomId) {
       try {
-        // Get all attention data and send it to the server
         const allAttentionData = {
           ...attentionData,
           [socket.id]: standardizedResult
         };
         
-        // Make sure the attention data is in the right format for the server
         const formattedData = {};
         
         Object.keys(allAttentionData).forEach(userId => {
@@ -104,12 +96,10 @@ export const AttentionProvider = ({ children }) => {
           }
         });
         
-        // Only send if we have data to send
         if (Object.keys(formattedData).length > 0) {
           console.log("Sending attention data to server:", 
             Object.keys(formattedData).map(id => `${id}: ${formattedData[id].attentionState}`).join(', '));
           
-          // Include roomId to make sure server associates data with the right meeting
           socketContext.sendAttentionData({
             roomId: roomId,
             attentionData: formattedData
@@ -123,23 +113,18 @@ export const AttentionProvider = ({ children }) => {
   
   const handleReceivedAttentionData = useCallback((userId, data) => {
     setAttentionData(prev => {
-      // Store the new state
       const newAttentionData = {
         ...prev,
         [userId]: data
       };
       
-      // If user is host, check for state changes and send notifications
       if (isRoomCreator && data?.attentionState) {
         const currentState = data.attentionState;
         const previousState = prev[userId]?.attentionState;
         
-        // Find participant name
         const participantName = participants?.find(p => p.id === userId)?.displayName || 'A participant';
         
-        // If state changed and it's not the first time we're seeing this participant
         if (previousState && previousState !== currentState) {
-          // Only notify about important changes
           if ((previousState === 'active' || previousState === 'attentive') && 
               (currentState === 'absent' || currentState === 'sleeping')) {
             addNotification(
@@ -172,7 +157,6 @@ export const AttentionProvider = ({ children }) => {
     });
   }, [isRoomCreator, participants, addNotification]);
   
-  // Helper function to get human-readable state names
   const getAttentionStateName = (state) => {
     if (!state) return 'Unknown';
     
@@ -443,19 +427,15 @@ export const AttentionProvider = ({ children }) => {
     };
   }, [socketContext, handleReceivedAttentionData]);
   
-  // Create a function to standardize timestamp format across the app
   const standardizeTimestamp = (timestamp) => {
     if (!timestamp) return Date.now();
     
-    // If it's a number (Unix timestamp in milliseconds), use it directly
     if (typeof timestamp === 'number') return timestamp;
     
-    // If it's a string that looks like a number, convert it
     if (typeof timestamp === 'string' && /^\d+$/.test(timestamp)) {
       return parseInt(timestamp, 10);
     }
     
-    // Otherwise, try to parse it as a date string
     try {
       const date = new Date(timestamp);
       if (!isNaN(date.getTime())) {
@@ -465,7 +445,6 @@ export const AttentionProvider = ({ children }) => {
       console.error('Invalid timestamp format:', timestamp);
     }
     
-    // Fallback to current time
     return Date.now();
   };
   

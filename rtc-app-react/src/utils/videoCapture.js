@@ -1,10 +1,4 @@
-/**
- * @param {HTMLVideoElement} videoElement 
- * @param {Object} options 
- * @param {number} options.quality 
- * @param {number} options.maxWidth 
- * @returns {string} 
- */
+
 export const captureVideoFrame = (videoElement, options = {}) => {
   if (!videoElement || !videoElement.readyState) {
     console.warn('Video element not ready for capture');
@@ -43,15 +37,7 @@ export const captureVideoFrame = (videoElement, options = {}) => {
   }
 };
 
-/**
- * @param {HTMLVideoElement} videoElement 
- * @param {Function} onFrameCaptured 
- * @param {Object} options 
- * @param {number} options.interval 
- * @param {number} options.quality 
- * @param {number} options.maxWidth 
- * @returns {Object} 
- */
+
 export const setupPeriodicCapture = (videoElement, onFrameCaptured, options = {}) => {
   const interval = options.interval || 5000;
   const captureOptions = {

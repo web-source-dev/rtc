@@ -109,11 +109,9 @@ const VideoParticipant = ({ participant }) => {
   const isVideoEnabled = participant.stream ? 
     participant.stream.getVideoTracks().some(track => track.enabled) : false;
   
-  // Check if this is the local user
   const localUserId = socket?.id;
   const isLocalUser = participant.id === localUserId;
   
-  // Get display name - use "You" for local user, otherwise use the participant's displayName
   const displayName = isLocalUser ? "You" : (participant.displayName || `Participant ${participant.id.substring(0, 4)}`);
 
   const renderConnectionStatus = () => {

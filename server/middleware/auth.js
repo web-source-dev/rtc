@@ -1,12 +1,10 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// Get JWT secret from environment variables
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 module.exports = async (req, res, next) => {
   try {
-    // Get token from header
     const token = req.header('Authorization')?.replace('Bearer ', '');
     
     if (!token) {
@@ -16,10 +14,8 @@ module.exports = async (req, res, next) => {
       });
     }
     
-    // Verify token
     const decoded = jwt.verify(token, JWT_SECRET);
     
-    // Find user by ID
     const user = await User.findById(decoded.id);
     
     if (!user) {
@@ -28,8 +24,7 @@ module.exports = async (req, res, next) => {
         message: 'User not found'
       });
     }
-    
-    // Add user to request object
+      
     req.user = decoded;
     
     next();
