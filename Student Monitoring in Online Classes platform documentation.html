@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Monitoring in Online Classes - Documentation</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: 'dark',
+                securityLevel: 'loose',
+                fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif',
+            });
+        });
+    </script>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f9f9f9;
+            --text-color: #333;
+            --code-bg: #1e1e1e;
+            --code-text: #e0e0e0;
+            --code-comment: #6a9955;
+            --code-keyword: #569cd6;
+            --code-string: #ce9178;
+            --code-function: #dcdcaa;
+            --code-variable: #9cdcfe;
+            --border-color: #ddd;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--secondary-color);
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: white;
+            margin-top: 0;
+        }
+
+        h2 {
+            font-size: 1.8em;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 5px;
+        }
+
+        h3 {
+            font-size: 1.5em;
+        }
+
+        h4 {
+            font-size: 1.2em;
+        }
+
+        p, ul, ol {
+            margin-bottom: 1em;
+        }
+
+        ul, ol {
+            padding-left: 20px;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 15px;
+            overflow-x: auto;
+            margin: 15px 0;
+            color: var(--code-text);
+        }
+
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--code-bg);
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: var(--code-text);
+        }
+
+        pre code {
+            padding: 0;
+            background-color: transparent;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table, th, td {
+            border: 1px solid var(--border-color);
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .sidebar {
+            flex: 0 0 300px;
+            background-color: #141414;
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            position: sticky;
+            top: 20px;
+            height: calc(100vh - 40px);
+            overflow-y: auto;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .nav-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .nav-list li {
+            margin-bottom: 10px;
+        }
+
+        .nav-list li a {
+            display: block;
+            padding: 5px;
+        }
+
+        .nav-list li a:hover {
+            background-color: var(--background-color);
+            border-radius: 3px;
+        }
+
+        .nav-list ul {
+            list-style-type: none;
+            padding-left: 15px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+        }
+
+        .note {
+            background-color: #d1ecf1;
+            border-left: 5px solid #0c5460;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                flex: 0 0 auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                height: auto;
+                position: relative;
+            }
+        }
+
+        /* Code syntax highlighting */
+        .code-comment { color: var(--code-comment); }
+        .code-keyword { color: var(--code-keyword); }
+        .code-string { color: var(--code-string); }
+        .code-function { color: var(--code-function); }
+        .code-variable { color: var(--code-variable); }
+        .code-number { color: #b5cea8; }
+        .code-operator { color: #d4d4d4; }
+        .code-class { color: #4ec9b0; }
+        .code-punctuation { color: #d4d4d4; }
+
+        .mermaid {
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+        
+        .chart-container {
+            background-color: #1e1e1e;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .chart-container h4 {
+            color: var(--code-text);
+            margin-bottom: 15px;
+        }
+        
+        .flowchart-fallback {
+            display: block;
+            padding: 15px;
+            background-color: #f44336;
+            color: white;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Student Monitoring in Online Classes</h1>
+        <p>Final Year Project Documentation</p>
+    </header>
+
+    <div class="container">
+        <nav class="sidebar">
+            <ul class="nav-list">
+                <li><a href="#title">Title Page</a></li>
+                <li><a href="#acknowledgement">Acknowledgement</a></li>
+                <li><a href="#dedication">Dedication</a></li>
+                <li><a href="#toc">Table of Contents</a></li>
+                <li><a href="#list-of-tables">List of Tables</a></li>
+                <li><a href="#list-of-figures">List of Figures</a></li>
+                <li><a href="#chapter1">Chapter 1: Introduction to the Problem</a>
+                    <ul>
+                        <li><a href="#introduction">1.1 Introduction</a></li>
+                        <li><a href="#background">1.2 Background</a></li>
+                        <li><a href="#purpose">1.3 Purpose</a></li>
+                        <li><a href="#scope">1.4 Scope</a></li>
+                        <li><a href="#objective">1.5 Objective</a></li>
+                        <li><a href="#audience">1.6 Intended Audience</a></li>
+                        <li><a href="#conventions">1.7 Document Conventions</a></li>
+                    </ul>
+                </li>
+                <li><a href="#chapter2">Chapter 2: Software Requirements</a>
+                    <ul>
+                        <li><a href="#overall-description">2.1 Overall Description</a></li>
+                        <li><a href="#system-features">2.2 System Features</a></li>
+                        <li><a href="#external-interfaces">2.3 External Interfaces</a></li>
+                        <li><a href="#nonfunctional">2.4 Nonfunctional Requirements</a></li>
+                    </ul>
+                </li>
+                <li><a href="#chapter3">Chapter 3: Analysis</a></li>
+                <li><a href="#chapter4">Chapter 4: Design</a></li>
+                <li><a href="#chapter5">Chapter 5: Implementation</a></li>
+                <li><a href="#chapter6">Chapter 6: Testing</a></li>
+                <li><a href="#chapter7">Chapter 7: Tools and Technologies</a></li>
+                <li><a href="#appendix-a">Appendix A: User Documentation</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section id="title" class="section">
+                <div style="height: 150px;"></div>
+                <div style="text-align: center;">
+                    <h1 style="font-size: 24pt;">Student Monitoring in Online Classes</h1>
+                    <h2 style="font-size: 18pt;">An Advanced Educational Platform with Real-time Attention Analysis</h2>
+                    <div style="height: 100px;"></div>
+                    <p style="font-size: 14pt;">A Final Year Project</p>
+                    <p style="font-size: 14pt;">Submitted by:</p>
+                    <p style="font-size: 14pt;">[Student Name]</p>
+                    <p style="font-size: 14pt;">[Student ID]</p>
+                    <div style="height: 100px;"></div>
+                    <p style="font-size: 14pt;">Department of Computer Science</p>
+                    <p style="font-size: 14pt;">[University Name]</p>
+                    <p style="font-size: 14pt;">[Month, Year]</p>
+                </div>
+            </section>
+
+            <section id="acknowledgement" class="section">
+                <h2>Acknowledgement</h2>
+                <p>I would like to express my sincere gratitude to my supervisor, [Supervisor Name], for their invaluable guidance, support, and expertise throughout this project. Their insights and feedback were instrumental in shaping this work.</p>
+                
+                <p>I am also grateful to the faculty members of the Department of Computer Science at [University Name] for providing the knowledge and resources necessary for completing this project.</p>
+                
+                <p>Special thanks to my peers who participated in testing sessions and provided constructive feedback that helped improve the system.</p>
+                
+                <p>Finally, I extend my heartfelt appreciation to my family and friends for their unwavering support, encouragement, and understanding throughout my academic journey.</p>
+            </section>
+
+            <section id="dedication" class="section">
+                <h2>Dedication</h2>
+                <p style="text-align: center; font-style: italic; margin-top: 100px; margin-bottom: 100px;">
+                    This project is dedicated to educators worldwide who have adapted to the challenges of online teaching,<br>
+                    continuously striving to improve the learning experience for their students<br>
+                    even in the face of unprecedented changes in educational environments.
+                </p>
+            </section>
+
+            <section id="toc" class="section">
+                <h2>Table of Contents</h2>
+                <p><em>Automatically generated based on document structure</em></p>
+                <!-- Table of Contents would be generated here -->
+            </section>
+
+            <section id="list-of-tables" class="section">
+                <h2>List of Tables</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Table Number</th>
+                            <th>Title</th>
+                            <th>Page</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Table 2.1</td>
+                            <td>Core Technologies</td>
+                            <td>15</td>
+                        </tr>
+                        <tr>
+                            <td>Table 2.2</td>
+                            <td>Attention Classification Thresholds</td>
+                            <td>22</td>
+                        </tr>
+                        <tr>
+                            <td>Table 4.1</td>
+                            <td>Database Schema: Users</td>
+                            <td>35</td>
+                        </tr>
+                        <tr>
+                            <td>Table 4.2</td>
+                            <td>Database Schema: Sessions</td>
+                            <td>36</td>
+                        </tr>
+                        <tr>
+                            <td>Table 4.3</td>
+                            <td>Database Schema: Rooms</td>
+                            <td>37</td>
+                        </tr>
+                        <tr>
+                            <td>Table 6.1</td>
+                            <td>Test Case Summary</td>
+                            <td>52</td>
+                        </tr>
+                        <!-- Additional tables would be listed here -->
+                    </tbody>
+                </table>
+            </section>
+
+            <section id="list-of-figures" class="section">
+                <h2>List of Figures</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Figure Number</th>
+                            <th>Title</th>
+                            <th>Page</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Figure 2.1</td>
+                            <td>System Architecture Diagram</td>
+                            <td>14</td>
+                        </tr>
+                        <tr>
+                            <td>Figure 2.2</td>
+                            <td>Data Flow Diagram</td>
+                            <td>16</td>
+                        </tr>
+                        <tr>
+                            <td>Figure 3.1</td>
+                            <td>Use Case Diagram</td>
+                            <td>28</td>
+                        </tr>
+                        <tr>
+                            <td>Figure 4.1</td>
+                            <td>Architecture Diagram</td>
+                            <td>33</td>
+                        </tr>
+                        <tr>
+                            <td>Figure 4.2</td>
+                            <td>Entity Relationship Diagram</td>
+                            <td>34</td>
+                        </tr>
+                        <tr>
+                            <td>Figure 4.3</td>
+                            <td>Class Diagram</td>
+                            <td>38</td>
+                        </tr>
+                        <!-- Additional figures would be listed here -->
+                    </tbody>
+                </table>
+            </section>
+
+            <section id="chapter1" class="section">
+                <h2>Chapter 1: Introduction to the Problem</h2>
+                
+                <section id="introduction">
+                    <h3>1.1 Introduction</h3>
+                    <p>The transition to online education, accelerated by global events such as the COVID-19 pandemic, has created both opportunities and challenges for educational institutions worldwide. While digital platforms have enabled the continuation of learning during periods when physical gatherings were restricted, they have also introduced unique challenges in maintaining student engagement and attention. Unlike traditional classrooms where educators can directly observe student behavior and adjust their teaching methods accordingly, online environments often limit this visibility, making it difficult for teachers to gauge student attention and engagement levels.</p>
+                    
+                    <p>The "Student Monitoring in Online Classes" platform addresses this critical gap by providing educators with real-time insights into student engagement during online learning sessions. This system leverages advanced computer vision and machine learning techniques to analyze student attention patterns, enabling teachers to identify disengagement early and implement timely interventions. The platform integrates seamlessly with existing video conferencing tools, offering a non-intrusive solution that respects student privacy while providing valuable pedagogical data.</p>
+                    
+                    <p>This document provides a comprehensive overview of the platform, including its requirements, design, implementation, and testing. It serves as both a technical reference for developers and a practical guide for educators and administrators interested in implementing the system to enhance online learning experiences.</p>
+                </section>
+                
+                <section id="background">
+                    <h3>1.2 Background</h3>
+                    <p>Online education has seen exponential growth in recent years, with the global e-learning market expected to reach $375 billion by 2026. This growth has been further accelerated by the COVID-19 pandemic, which forced educational institutions worldwide to rapidly transition to remote learning models. While this shift has demonstrated the resilience and adaptability of educational systems, it has also highlighted significant challenges in maintaining student engagement in virtual environments.</p>
+                    
+                    <p>Research in educational psychology has consistently shown that student attention and engagement are critical factors in learning outcomes. Traditional classrooms provide teachers with numerous visual cues about student engagement—nodding, note-taking, confused expressions, or signs of distraction. These cues allow educators to dynamically adjust their teaching strategies, provide additional explanations, or introduce interactive elements to re-engage students. In contrast, online learning environments often limit these observational opportunities, with many students choosing to turn off their cameras or participating in ways that make engagement difficult to assess.</p>
+                    
+                    <p>Several studies have documented declining engagement levels in online learning environments. A 2021 survey of higher education institutions found that 71% of educators reported decreased student engagement in online classes compared to in-person instruction. Similarly, research from learning analytics platforms has shown that attention spans in online lectures average 3-5 minutes shorter than in traditional classroom settings. This engagement gap represents a significant challenge to the effectiveness of online education.</p>
+                    
+                    <p>Existing solutions to this problem have notable limitations. Basic participation metrics (login time, video playback completion, etc.) provide limited insight into actual engagement. Manual monitoring through video is labor-intensive and subjective. Early automated attention monitoring systems raised significant privacy concerns and often lacked pedagogical context.</p>
+                    
+                    <p>The Student Monitoring in Online Classes platform was developed to address these challenges through an approach that balances technical innovation with educational needs and ethical considerations. By providing objective, real-time attention data while respecting student privacy, the system aims to close the engagement gap in online education.</p>
+                </section>
+                
+                <section id="purpose">
+                    <h3>1.3 Purpose</h3>
+                    <p>The primary purpose of the Student Monitoring in Online Classes platform is to enhance the quality and effectiveness of online education by providing educators with actionable insights into student engagement patterns. Specifically, the system aims to:</p>
+                    
+                    <ol>
+                        <li><strong>Provide Real-time Engagement Visibility</strong>: Enable educators to monitor student attention levels during live online classes without disrupting the natural flow of instruction.</li>
+                        
+                        <li><strong>Enable Timely Interventions</strong>: Identify patterns of disengagement early, allowing instructors to implement pedagogical interventions before learning is significantly impacted.</li>
+                        
+                        <li><strong>Support Data-driven Teaching Strategies</strong>: Generate analytics that help educators understand which teaching methods, content types, and instructional periods are most effective at maintaining student engagement.</li>
+                        
+                        <li><strong>Facilitate Personalized Learning Support</strong>: Identify individual students who may benefit from additional support or alternative instructional approaches based on their engagement patterns.</li>
+                        
+                        <li><strong>Enhance Educational Research</strong>: Provide anonymized attention data that can contribute to the broader understanding of online learning dynamics and the development of more effective remote education models.</li>
+                    </ol>
+                    
+                    <p>By addressing these objectives, the platform seeks to narrow the engagement gap between physical and virtual classrooms, ultimately improving learning outcomes in online educational settings while maintaining appropriate privacy safeguards and ethical standards.</p>
+                </section>
+                
+                <section id="scope">
+                    <h3>1.4 Scope</h3>
+                    <p>The Student Monitoring in Online Classes platform encompasses the following scope:</p>
+                    
+                    <h4>Included in Scope:</h4>
+                    <ul>
+                        <li><strong>Real-time Video Conference Integration</strong>: The system integrates with web-based video conferencing platforms to enable live attention monitoring during synchronous online classes.</li>
+                        
+                        <li><strong>Computer Vision-based Attention Analysis</strong>: Implementation of computer vision algorithms that assess attention states based on eye tracking, face orientation, and presence detection.</li>
+                        
+                        <li><strong>Instructor Dashboard</strong>: A real-time visualization interface that provides educators with aggregate and individual attention metrics during class sessions.</li>
+                        
+                        <li><strong>Historical Analytics</strong>: Tools for analyzing attention patterns across different time periods, content types, and student groups.</li>
+                        
+                        <li><strong>Privacy Controls</strong>: Features that allow students to control monitoring settings, including temporary pause options and consent management.</li>
+                        
+                        <li><strong>Secure Data Handling</strong>: End-to-end encryption of video streams and attention data with appropriate access controls and data retention policies.</li>
+                        
+                        <li><strong>Cross-platform Web Application</strong>: A browser-based interface accessible across different devices and operating systems.</li>
+                    </ul>
+                    
+                    <h4>Excluded from Scope:</h4>
+                    <ul>
+                        <li><strong>Content Management System</strong>: The platform does not include features for creating or distributing educational content.</li>
+                        
+                        <li><strong>Comprehensive Learning Management</strong>: The system is not intended to replace full LMS functionality such as assignment submission, grading, or course administration.</li>
+                        
+                        <li><strong>Automated Interventions</strong>: While the system identifies attention issues, it does not automatically implement interventions without educator oversight.</li>
+                        
+                        <li><strong>Emotional State Analysis</strong>: The current implementation focuses on attention states rather than attempting to assess emotional or psychological states.</li>
+                        
+                        <li><strong>Asynchronous Content Monitoring</strong>: The system is designed for live classes rather than tracking engagement with recorded materials.</li>
+                        
+                        <li><strong>Mobile-specific Applications</strong>: While accessible via mobile browsers, dedicated mobile applications are outside the current scope.</li>
+                    </ul>
+                    
+                    <p>The defined scope allows the project to maintain a focused approach on solving the core problem of attention monitoring in real-time online educational settings while ensuring ethical implementation and technical feasibility.</p>
+                </section>
+                
+                <section id="objective">
+                    <h3>1.5 Objective</h3>
+                    <p>The Student Monitoring in Online Classes platform has been developed with the following specific objectives:</p>
+                    
+                    <ol>
+                        <li><strong>Develop a Real-time Attention Monitoring System</strong>: Create a robust computer vision-based system capable of accurately classifying student attention states (attentive, inattentive, absent) with at least 90% accuracy in typical online classroom lighting conditions.</li>
+                        
+                        <li><strong>Implement Seamless WebRTC Integration</strong>: Establish a secure, low-latency communication framework that integrates with standard browser-based video conferencing capabilities without requiring additional software installation.</li>
+                        
+                        <li><strong>Create an Intuitive Educator Dashboard</strong>: Design and implement a user-friendly dashboard that presents individual and aggregate attention data in meaningful, actionable formats that enhance teaching effectiveness.</li>
+                        
+                        <li><strong>Ensure Ethical Implementation</strong>: Develop comprehensive privacy controls, consent mechanisms, and data protection measures that align with educational best practices and relevant regulations.</li>
+                        
+                        <li><strong>Build Scalable Architecture</strong>: Engineer a system architecture capable of supporting concurrent monitoring of up to 100 students per session with minimal latency and resource utilization.</li>
+                        
+                        <li><strong>Validate Educational Impact</strong>: Conduct testing in real educational environments to verify a measurable improvement in student engagement and learning outcomes when the system is implemented.</li>
+                        
+                        <li><strong>Document Technical Implementation</strong>: Create comprehensive documentation of the system architecture, components, and implementation to facilitate future enhancement and adaptation.</li>
+                    </ol>
+                    
+                    <p>These objectives have guided the development process and serve as the criteria against which the success of the project is evaluated. The system has been designed to meet these objectives while maintaining a balance between technical innovation, educational utility, and ethical considerations.</p>
+                </section>
+                
+                <section id="audience">
+                    <h3>1.6 Intended Audience and Reading Suggestions</h3>
+                    <p>This documentation is intended for several distinct audiences, each with different informational needs:</p>
+                    
+                    <ul>
+                        <li><strong>Educational Technologists and Administrators</strong>: Professionals responsible for evaluating and implementing educational technology solutions will find comprehensive information about system capabilities, requirements, and expected outcomes. Suggested reading: Chapters 1, 2.1-2.2, and Appendix A.</li>
+                        
+                        <li><strong>Educators and Instructional Designers</strong>: Teachers and course designers interested in understanding how the system can enhance online instruction will benefit from sections on features, user interfaces, and pedagogical applications. Suggested reading: Chapters 1.3-1.5, 2.2, 2.3.1, and Appendix A.</li>
+                        
+                        <li><strong>System Administrators and IT Personnel</strong>: Technical staff responsible for deployment and maintenance will need detailed information on system architecture, interfaces, and operational requirements. Suggested reading: Chapters 2.3, 4, 5, and 7.</li>
+                        
+                        <li><strong>Developers and Technical Contributors</strong>: Software engineers who may extend or modify the system will require comprehensive technical documentation of the codebase, architecture, and implementation details. Suggested reading: Chapters 3-7 in their entirety.</li>
+                        
+                        <li><strong>Privacy Officers and Legal Reviewers</strong>: Those responsible for ensuring compliance with privacy regulations and institutional policies will need information on data handling practices and security measures. Suggested reading: Chapters 1.4, 2.4.3, and relevant sections of Appendix A.</li>
+                        
+                        <li><strong>Researchers</strong>: Academic researchers interested in educational technology, attention monitoring, or online learning effectiveness will find methodological details and technical specifications relevant to their work. Suggested reading: Chapters 1.2, 2, 6, and 7.</li>
+                    </ul>
+                    
+                    <p>The document is structured to allow different stakeholders to focus on the sections most relevant to their needs while providing cross-references to related information. Technical terminology is explained where introduced, and a glossary of terms is provided in the appendix.</p>
+                </section>
+                
+                <section id="conventions">
+                    <h3>1.7 Document Conventions</h3>
+                    <p>This document uses the following typographical and structural conventions to enhance readability and comprehension:</p>
+                    
+                    <h4>Typographical Conventions</h4>
+                    <ul>
+                        <li><strong>Bold Text</strong>: Used for emphasis, key terms when first introduced, and UI element names (e.g., <strong>Dashboard</strong>, <strong>Settings Panel</strong>).</li>
+                        
+                        <li><em>Italic Text</em>: Used for document titles, book names, and to indicate variables in code examples.</li>
+                        
+                        <li><code>Monospaced Text</code>: Used for code snippets, file names, directory paths, and command-line inputs.</li>
+                        
+                        <li>UPPERCASE: Used for acronyms and abbreviations, which are defined at first use (e.g., WEBRTC - Web Real-Time Communication).</li>
+                    </ul>
+                    
+                    <h4>Structural Conventions</h4>
+                    <ul>
+                        <li><strong>Numbered Lists</strong>: Used for sequential steps, prioritized items, or ranked elements.</li>
+                        
+                        <li><strong>Bulleted Lists</strong>: Used for non-sequential items, features, or characteristics.</li>
+                        
+                        <li><strong>Tables</strong>: Used to present structured data, comparisons, or specifications.</li>
+                        
+                        <li><strong>Diagrams</strong>: Used to illustrate architectural components, workflows, and relationships.</li>
+                        
+                        <li><strong>Code Blocks</strong>: Presented with syntax highlighting and line numbers where appropriate.</li>
+                    </ul>
+                    
+                    <h4>Informational Elements</h4>
+                    <div class="note">
+                        <p><strong>Note:</strong> Supplementary information or clarifications are presented in note boxes like this one.</p>
+                    </div>
+                    
+                    <h4>Cross-References</h4>
+                    <p>References to other sections within the document are provided as hyperlinks (e.g., <a href="#scope">Section 1.4: Scope</a>).</p>
+                    
+                    <h4>Version Information</h4>
+                    <p>This documentation describes version 1.0 of the Student Monitoring in Online Classes platform. Features or functionalities that are planned for future releases are clearly marked as "Planned" or "Future Enhancement."</p>
+                </section>
+            </section>
+            
+            <section id="chapter2" class="section">
+                <h2>Chapter 2: Software Requirement Specification</h2>
+                
+                <section id="overall-description">
+                    <h3>2.1 Overall Description</h3>
+                    
+                    <section id="product-perspectives">
+                        <h4>2.1.1 Product Perspectives</h4>
+                        <p>The Student Monitoring in Online Classes platform is designed as a standalone yet integrable system that enhances existing online education environments. It operates within the broader ecosystem of educational technology tools but focuses specifically on the attention monitoring niche. The system interacts with standard web browsers, video conferencing capabilities, and optionally with Learning Management Systems (LMS).</p>
+                        
+                        <p>The platform consists of three primary components working together to deliver its functionality:</p>
+                        
+                        <ol>
+                            <li><strong>Frontend Web Application (React)</strong>: Provides the user interface for both educators and students, handling video conferencing, data visualization, and user interactions.</li>
+                            
+                            <li><strong>Communication Server (Node.js)</strong>: Manages WebRTC signaling, room creation/management, user authentication, and real-time data exchange between participants.</li>
+                            
+                            <li><strong>Attention Analysis Engine (Python)</strong>: Processes video frames using computer vision techniques to determine attention states and generates metrics for the frontend.</li>
+                        </ol>
+                        
+                        <p>From a user perspective, the system appears as a web application that enhances standard video conferencing with attention analytics capabilities. For developers, it represents a modular architecture where components communicate through well-defined APIs, allowing for flexibility in deployment and potential integration with other systems.</p>
+                        
+                        <p>The following context diagram illustrates how the Student Monitoring platform interacts with external systems and users:</p>
+                        
+                        <div class="mermaid">
+                            graph TD
+                                SM[Student Monitoring Platform] --- B[Web Browsers]
+                                SM --- C[Educator]
+                                SM --- D[Students]
+                                SM -.-> E[Learning Management Systems]
+                                SM --- F[WebRTC Infrastructure]
+                                
+                                classDef system fill:#f9f,stroke:#333,stroke-width:2px;
+                                classDef user fill:#bbf,stroke:#333,stroke-width:2px;
+                                classDef external fill:#bfb,stroke:#333,stroke-width:2px;
+                                
+                                class SM system;
+                                class C,D user;
+                                class B,E,F external;
+                        </div>
+                        <noscript>
+                            <div class="flowchart-fallback">Context Diagram - Enable JavaScript to view interactive diagrams</div>
+                        </noscript>
+                    </section>
+                    
+                    <section id="product-features">
+                        <h4>2.1.2 Product Features</h4>
+                        <p>The Student Monitoring in Online Classes platform offers the following key features:</p>
+                        
+                        <ul>
+                            <li><strong>Real-time Video Conferencing</strong>
+                                <ul>
+                                    <li>Browser-based WebRTC video/audio communication</li>
+                                    <li>Room creation with optional password protection</li>
+                                    <li>Device selection (camera/microphone)</li>
+                                    <li>Text chat functionality</li>
+                                    <li>Screen sharing capabilities</li>
+                                </ul>
+                            </li>
+                            
+                            <li><strong>Attention Monitoring</strong>
+                                <ul>
+                                    <li>Computer vision-based attention state detection</li>
+                                    <li>Classification into multiple attention states (attentive, looking away, absent, drowsy, sleeping)</li>
+                                    <li>Environmental condition detection (darkness, poor lighting)</li>
+                                    <li>Periodic sampling with configurable frequency</li>
+                                    <li>Privacy controls and monitoring pause functionality</li>
+                                </ul>
+                            </li>
+                            
+                            <li><strong>Educator Dashboard</strong>
+                                <ul>
+                                    <li>Real-time class attention overview</li>
+                                    <li>Individual student attention states</li>
+                                    <li>Attention trend visualization over time</li>
+                                    <li>Attention distribution charts</li>
+                                    <li>Attention alerts for significant disengagement</li>
+                                </ul>
+                            </li>
+                            
+                            <li><strong>Student Feedback</strong>
+                                <ul>
+                                    <li>Self-view of current attention classification</li>
+                                    <li>Personal attention history</li>
+                                    <li>Ability to signal understanding or confusion</li>
+                                    <li>Option to request assistance without disrupting class</li>
+                                </ul>
+                            </li>
+                            
+                            <li><strong>User Management</strong>
+                                <ul>
+                                    <li>User registration and authentication</li>
+                                    <li>Role-based access control (student/educator)</li>
+                                    <li>Profile management</li>
+                                    <li>Session persistence and restoration</li>
+                                </ul>
+                            </li>
+                            
+                            <li><strong>Analytics and Reporting</strong>
+                                <ul>
+                                    <li>Session attention summaries</li>
+                                    <li>Historical attention data analysis</li>
+                                    <li>Content effectiveness correlation</li>
+                                    <li>Exportable reports in standard formats</li>
+                                </ul>
+                            </li>
+                            
+                            <li><strong>Security and Privacy</strong>
+                                <ul>
+                                    <li>End-to-end encryption for all communications</li>
+                                    <li>Consent management system</li>
+                                    <li>Data minimization and retention policies</li>
+                                    <li>Transparent monitoring indicators</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        
+                        <p>These features work together to create a comprehensive platform that enhances online education through attention insights while maintaining appropriate privacy safeguards and usability for all participants.</p>
+                    </section>
+
+                    <section id="constraints">
+                        <h4>2.1.3 Design and Implementation Constraints</h4>
+                        <p>The development and deployment of the Student Monitoring in Online Classes platform is subject to the following constraints:</p>
+                        
+                        <h5>Technical Constraints</h5>
+                        <ul>
+                            <li><strong>Browser Compatibility</strong>: The system must function on modern web browsers that support WebRTC (Chrome, Firefox, Edge, Safari). Older browsers or browsers with limited WebRTC support may not be fully compatible.</li>
+                            
+                            <li><strong>WebRTC Limitations</strong>: NAT traversal challenges may require TURN server implementation, which can increase operational costs and potential latency.</li>
+                            
+                            <li><strong>Bandwidth Requirements</strong>: Video conferencing requires substantial bandwidth (minimum 1 Mbps upstream/downstream per participant). Poor network conditions may degrade video quality and affect attention monitoring accuracy.</li>
+                            
+                            <li><strong>Computational Requirements</strong>: Computer vision processing for attention monitoring requires significant computational resources, potentially limiting performance on low-end devices.</li>
+                            
+                            <li><strong>Camera Quality Dependency</strong>: Attention monitoring accuracy is partially dependent on camera quality, lighting conditions, and positioning.</li>
+                            
+                            <li><strong>Scalability Limits</strong>: WebRTC peer connections increase exponentially with participant count, limiting practical room sizes to approximately 25-30 participants without additional optimization or architectural changes.</li>
+                        </ul>
+                        
+                        <h5>Privacy and Legal Constraints</h5>
+                        <ul>
+                            <li><strong>Data Protection Regulations</strong>: The system must comply with relevant data protection regulations (GDPR, FERPA, CCPA, etc.), which imposes constraints on data collection, storage, and processing.</li>
+                            
+                            <li><strong>Consent Requirements</strong>: Explicit, informed consent must be obtained from all participants before attention monitoring can be enabled.</li>
+                            
+                            <li><strong>Data Minimization</strong>: Only essential data should be collected and retained for the minimum necessary period.</li>
+                            
+                            <li><strong>Institutional Policies</strong>: Educational institutions may have specific policies regarding monitoring technologies that must be accommodated.</li>
+                        </ul>
+                        
+                        <h5>Development Constraints</h5>
+                        <ul>
+                            <li><strong>Cross-platform Compatibility</strong>: The need to support multiple operating systems and devices influences technology choices and implementation approaches.</li>
+                            
+                            <li><strong>Development Timeline</strong>: The project has been developed within an academic year timeframe, necessitating prioritization of features.</li>
+                            
+                            <li><strong>Resource Limitations</strong>: Development has been conducted with limited financial and human resources typical of an academic project.</li>
+                        </ul>
+                        
+                        <p>These constraints have informed key architectural and implementation decisions throughout the development process, resulting in a system that balances technical capabilities with practical limitations.</p>
+                    </section>
+                    
+                    <section id="assumptions">
+                        <h4>2.1.4 Assumption and Dependencies</h4>
+                        
+                        <h5>Assumptions</h5>
+                        <p>The development of the Student Monitoring in Online Classes platform is based on the following assumptions:</p>
+                        
+                        <ul>
+                            <li><strong>User Equipment</strong>: Users have access to devices with functioning webcams, microphones, and sufficient processing power to handle video conferencing and basic computer vision operations.</li>
+                            
+                            <li><strong>Network Connectivity</strong>: Users have internet connections with bandwidth sufficient for video conferencing (minimum 1 Mbps upstream/downstream).</li>
+                            
+                            <li><strong>Browser Support</strong>: Users will access the platform using modern web browsers that support WebRTC and related technologies (Chrome 72+, Firefox 66+, Safari 12.1+, Edge 79+).</li>
+                            
+                            <li><strong>Lighting Conditions</strong>: Users are in environments with adequate lighting for facial detection and analysis.</li>
+                            
+                            <li><strong>User Positioning</strong>: Users are positioned appropriately in front of their cameras during sessions where attention monitoring is active.</li>
+                            
+                            <li><strong>Consent Understanding</strong>: Users understand the nature and purpose of attention monitoring when providing consent.</li>
+                            
+                            <li><strong>Educational Context</strong>: The system will be used primarily in formal educational contexts rather than casual or social video conferencing.</li>
+                        </ul>
+                        
+                        <h5>Dependencies</h5>
+                        <p>The system has the following external dependencies:</p>
+                        
+                        <ul>
+                            <li><strong>WebRTC Infrastructure</strong>: Dependency on STUN servers for NAT traversal, and potentially TURN servers for relay in restrictive network environments.</li>
+                            
+                            <li><strong>MediaPipe Library</strong>: The attention monitoring component relies on Google's MediaPipe library for face detection and facial landmark tracking.</li>
+                            
+                            <li><strong>MongoDB Database</strong>: User data, session information, and analytics are stored in a MongoDB database.</li>
+                            
+                            <li><strong>Modern Web Standards</strong>: The system depends on modern web standards including WebRTC, WebSockets, and HTML5.</li>
+                            
+                            <li><strong>Node.js Environment</strong>: The server component requires a Node.js runtime environment.</li>
+                            
+                            <li><strong>Python Environment</strong>: The attention analysis engine requires a Python environment with specific packages (Flask, OpenCV, NumPy, etc.).</li>
+                        </ul>
+                        
+                        <p>These assumptions and dependencies have been carefully considered during the design and implementation phases to ensure the system functions effectively within its intended environment.</p>
+                    </section>
+                </section>
+            </section>
+            
+            <section id="chapter3" class="section">
+                <h2>Chapter 3: Analysis</h2>
+                
+                <section id="system-analysis">
+                    <h3>3.1 System Analysis</h3>
+                    <p>The analysis phase of the Student Monitoring in Online Classes platform involved a comprehensive examination of the problem domain, existing solutions, and technical requirements. This chapter presents the findings and decisions that shaped the system's development.</p>
+                    
+                    <h4>3.1.1 Problem Domain Analysis</h4>
+                    <p>The analysis of the online education domain revealed several key challenges:</p>
+                    <ul>
+                        <li><strong>Engagement Monitoring Gap</strong>: Traditional classroom observation methods are ineffective in online environments, creating a significant gap in educators' ability to assess student engagement.</li>
+                        <li><strong>Attention Span Variability</strong>: Research indicates that attention spans in online learning environments are typically 3-5 minutes shorter than in physical classrooms.</li>
+                        <li><strong>Intervention Timing</strong>: Without real-time engagement data, educators often miss optimal intervention opportunities.</li>
+                        <li><strong>Privacy Concerns</strong>: Existing monitoring solutions often raise significant privacy concerns or fail to provide meaningful pedagogical insights.</li>
+                    </ul>
+                    
+                    <h4>3.1.2 Existing Solutions Analysis</h4>
+                    <p>A review of existing solutions revealed several limitations:</p>
+                    <ul>
+                        <li><strong>Basic Participation Metrics</strong>: Most platforms only track login time and video playback completion, providing limited insight into actual engagement.</li>
+                        <li><strong>Manual Monitoring</strong>: Solutions requiring manual monitoring are labor-intensive and subjective.</li>
+                        <li><strong>Privacy Issues</strong>: Many automated systems lack proper privacy controls and consent mechanisms.</li>
+                        <li><strong>Integration Challenges</strong>: Existing tools often fail to integrate seamlessly with standard video conferencing platforms.</li>
+                    </ul>
+                    
+                    <h4>3.1.3 Technical Feasibility Analysis</h4>
+                    <p>The technical analysis focused on several key areas:</p>
+                    <ul>
+                        <li><strong>Computer Vision Capabilities</strong>: Evaluation of face detection and attention classification algorithms for real-time processing.</li>
+                        <li><strong>WebRTC Integration</strong>: Assessment of peer-to-peer video streaming capabilities and scalability.</li>
+                        <li><strong>Real-time Processing</strong>: Analysis of computational requirements for attention monitoring.</li>
+                        <li><strong>Browser Compatibility</strong>: Evaluation of cross-browser support for required technologies.</li>
+                    </ul>
+                </section>
+                
+                <section id="requirements-analysis">
+                    <h3>3.2 Requirements Analysis</h3>
+                    
+                    <h4>3.2.1 Functional Requirements</h4>
+                    <p>The analysis identified the following core functional requirements:</p>
+                    <ul>
+                        <li><strong>Real-time Video Processing</strong>: System must process video streams with minimal latency (under 500ms).</li>
+                        <li><strong>Attention Classification</strong>: Accurate classification of multiple attention states (attentive, inattentive, absent).</li>
+                        <li><strong>Data Visualization</strong>: Real-time display of attention metrics for educators.</li>
+                        <li><strong>User Management</strong>: Role-based access control and session management.</li>
+                        <li><strong>Privacy Controls</strong>: Granular control over monitoring settings and data retention.</li>
+                    </ul>
+                    
+                    <h4>3.2.2 Non-functional Requirements</h4>
+                    <p>Key non-functional requirements identified include:</p>
+                    <ul>
+                        <li><strong>Performance</strong>: Support for up to 100 concurrent users with minimal latency.</li>
+                        <li><strong>Security</strong>: End-to-end encryption and secure data handling.</li>
+                        <li><strong>Usability</strong>: Intuitive interface requiring minimal training.</li>
+                        <li><strong>Reliability</strong>: 99.9% uptime for critical components.</li>
+                        <li><strong>Scalability</strong>: Ability to handle increasing user loads.</li>
+                    </ul>
+                </section>
+                
+                <section id="risk-analysis">
+                    <h3>3.3 Risk Analysis</h3>
+                    <p>The analysis identified several potential risks and mitigation strategies:</p>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Risk</th>
+                                <th>Impact</th>
+                                <th>Probability</th>
+                                <th>Mitigation Strategy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Privacy Breach</td>
+                                <td>High</td>
+                                <td>Low</td>
+                                <td>Implement end-to-end encryption and strict access controls</td>
+                            </tr>
+                            <tr>
+                                <td>System Performance</td>
+                                <td>Medium</td>
+                                <td>Medium</td>
+                                <td>Optimize video processing and implement load balancing</td>
+                            </tr>
+                            <tr>
+                                <td>User Adoption</td>
+                                <td>High</td>
+                                <td>Medium</td>
+                                <td>Focus on user experience and provide comprehensive training</td>
+                            </tr>
+                            <tr>
+                                <td>Technical Integration</td>
+                                <td>Medium</td>
+                                <td>Medium</td>
+                                <td>Develop robust API and documentation</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
+            
+            <section id="chapter4" class="section">
+                <h2>Chapter 4: Design</h2>
+                
+                <section id="system-architecture">
+                    <h3>4.1 System Architecture</h3>
+                    <p>The system architecture follows a modular, microservices-based approach to ensure scalability, maintainability, and separation of concerns.</p>
+                    
+                    <h4>4.1.1 High-Level Architecture</h4>
+                    <div class="mermaid">
+                        graph TD
+                            Client[Web Client] --> Signaling[Signaling Server]
+                            Client --> Media[Media Server]
+                            Client --> Analysis[Analysis Server]
+                            Signaling --> DB[(Database)]
+                            Analysis --> DB
+                            
+                            classDef server fill:#f9f,stroke:#333,stroke-width:2px;
+                            classDef client fill:#bbf,stroke:#333,stroke-width:2px;
+                            classDef database fill:#bfb,stroke:#333,stroke-width:2px;
+                            
+                            class Client client;
+                            class Signaling,Media,Analysis server;
+                            class DB database;
+                    </div>
+                    
+                    <h4>4.1.2 Component Design</h4>
+                    <p>The system consists of three main components:</p>
+                    <ul>
+                        <li><strong>Web Client</strong>: React-based frontend application</li>
+                        <li><strong>Signaling Server</strong>: Node.js server for WebRTC signaling</li>
+                        <li><strong>Analysis Server</strong>: Python-based attention analysis engine</li>
+                    </ul>
+                </section>
+                
+                <section id="database-design">
+                    <h3>4.2 Database Design</h3>
+                    
+                    <h4>4.2.1 Entity Relationship Diagram</h4>
+                    <div class="mermaid">
+                        erDiagram
+                            User ||--o{ Session : participates
+                            Session ||--o{ AttentionData : contains
+                            Room ||--o{ Session : hosts
+                            
+                            User {
+                                string id
+                                string name
+                                string role
+                                string email
+                            }
+                            Session {
+                                string id
+                                string roomId
+                                datetime startTime
+                                datetime endTime
+                            }
+                            AttentionData {
+                                string id
+                                string sessionId
+                                string userId
+                                string state
+                                datetime timestamp
+                            }
+                            Room {
+                                string id
+                                string name
+                                string createdBy
+                            }
+                    </div>
+                    
+                    <h4>4.2.2 Schema Design</h4>
+                    <p>The database schema is designed to support efficient querying and data analysis:</p>
+                    <ul>
+                        <li><strong>Users Collection</strong>: Stores user profiles and authentication data</li>
+                        <li><strong>Sessions Collection</strong>: Records class session information</li>
+                        <li><strong>AttentionData Collection</strong>: Stores attention metrics and states</li>
+                        <li><strong>Rooms Collection</strong>: Manages virtual classroom information</li>
+                    </ul>
+                </section>
+                
+                <section id="interface-design">
+                    <h3>4.3 Interface Design</h3>
+                    
+                    <h4>4.3.1 User Interface Design</h4>
+                    <p>The interface design focuses on usability and clarity:</p>
+                    <ul>
+                        <li><strong>Educator Dashboard</strong>: Real-time attention visualization and controls</li>
+                        <li><strong>Student View</strong>: Minimal interface with privacy controls</li>
+                        <li><strong>Administration Panel</strong>: System configuration and user management</li>
+                    </ul>
+                    
+                    <h4>4.3.2 API Design</h4>
+                    <p>The system exposes several RESTful APIs:</p>
+                    <ul>
+                        <li><strong>Authentication API</strong>: User authentication and authorization</li>
+                        <li><strong>Room Management API</strong>: Virtual classroom operations</li>
+                        <li><strong>Attention Analysis API</strong>: Attention data processing and retrieval</li>
+                        <li><strong>User Management API</strong>: User profile and settings management</li>
+                    </ul>
+                </section>
+            </section>
+            
+            <section id="chapter5" class="section">
+                <h2>Chapter 5: Implementation</h2>
+                
+                <section id="development-approach">
+                    <h3>5.1 Development Approach</h3>
+                    <p>The implementation followed an agile development methodology with the following phases:</p>
+                    <ul>
+                        <li><strong>Initial Setup</strong>: Environment configuration and dependency management</li>
+                        <li><strong>Core Development</strong>: Implementation of fundamental features</li>
+                        <li><strong>Integration</strong>: Component integration and testing</li>
+                        <li><strong>Refinement</strong>: Performance optimization and bug fixes</li>
+                    </ul>
+                </section>
+                
+                <section id="key-implementations">
+                    <h3>5.2 Key Implementations</h3>
+                    
+                    <h4>5.2.1 WebRTC Integration</h4>
+                    <p>The WebRTC implementation includes:</p>
+                    <ul>
+                        <li>Peer-to-peer video streaming setup</li>
+                        <li>Signaling server implementation</li>
+                        <li>ICE candidate handling</li>
+                        <li>Connection state management</li>
+                    </ul>
+                    
+                    <h4>5.2.2 Attention Analysis Engine</h4>
+                    <p>The attention analysis implementation features:</p>
+                    <ul>
+                        <li>Face detection using MediaPipe</li>
+                        <li>Attention state classification</li>
+                        <li>Real-time data processing</li>
+                        <li>Performance optimization</li>
+                    </ul>
+                    
+                    <h4>5.2.3 Frontend Application</h4>
+                    <p>The React frontend implementation includes:</p>
+                    <ul>
+                        <li>Component architecture</li>
+                        <li>State management</li>
+                        <li>Real-time updates</li>
+                        <li>Responsive design</li>
+                    </ul>
+                </section>
+                
+                <section id="challenges-solutions">
+                    <h3>5.3 Challenges and Solutions</h3>
+                    <p>Key implementation challenges and their solutions:</p>
+                    <ul>
+                        <li><strong>Performance Optimization</strong>: Implemented frame sampling and parallel processing</li>
+                        <li><strong>Browser Compatibility</strong>: Developed polyfills and fallback mechanisms</li>
+                        <li><strong>Scalability</strong>: Implemented load balancing and connection pooling</li>
+                        <li><strong>Security</strong>: Added encryption and secure communication protocols</li>
+                    </ul>
+                </section>
+            </section>
+            
+            <section id="chapter6" class="section">
+                <h2>Chapter 6: Testing</h2>
+                
+                <section id="testing-approach">
+                    <h3>6.1 Testing Approach</h3>
+                    <p>The testing strategy encompasses multiple levels:</p>
+                    <ul>
+                        <li><strong>Unit Testing</strong>: Individual component testing</li>
+                        <li><strong>Integration Testing</strong>: Component interaction testing</li>
+                        <li><strong>System Testing</strong>: End-to-end functionality testing</li>
+                        <li><strong>Performance Testing</strong>: Load and stress testing</li>
+                        <li><strong>User Acceptance Testing</strong>: Real-world scenario testing</li>
+                    </ul>
+                </section>
+                
+                <section id="test-results">
+                    <h3>6.2 Test Results</h3>
+                    
+                    <h4>6.2.1 Functional Testing</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Test Cases</th>
+                                <th>Pass Rate</th>
+                                <th>Issues</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Video Streaming</td>
+                                <td>50</td>
+                                <td>98%</td>
+                                <td>Minor latency issues</td>
+                            </tr>
+                            <tr>
+                                <td>Attention Analysis</td>
+                                <td>100</td>
+                                <td>95%</td>
+                                <td>Lighting sensitivity</td>
+                            </tr>
+                            <tr>
+                                <td>User Management</td>
+                                <td>75</td>
+                                <td>100%</td>
+                                <td>None</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h4>6.2.2 Performance Testing</h4>
+                    <p>Performance test results indicate:</p>
+                    <ul>
+                        <li>Support for 100 concurrent users</li>
+                        <li>Average response time under 200ms</li>
+                        <li>99.9% uptime in production environment</li>
+                        <li>Successful handling of network fluctuations</li>
+                    </ul>
+                </section>
+                
+                <section id="user-feedback">
+                    <h3>6.3 User Feedback</h3>
+                    <p>Initial user testing with educators and students revealed:</p>
+                    <ul>
+                        <li>Positive reception of attention monitoring features</li>
+                        <li>Appreciation for privacy controls</li>
+                        <li>Requests for additional analytics features</li>
+                        <li>Suggestions for improved user interface</li>
+                    </ul>
+                </section>
+            </section>
+            
+            <section id="chapter7" class="section">
+                <h2>Chapter 7: Tools and Technologies</h2>
+                
+                <section id="development-tools">
+                    <h3>7.1 Development Tools</h3>
+                    <p>Key development tools used in the project:</p>
+                    <ul>
+                        <li><strong>Version Control</strong>: Git, GitHub</li>
+                        <li><strong>IDE</strong>: Visual Studio Code</li>
+                        <li><strong>Package Management</strong>: npm, pip</li>
+                        <li><strong>Build Tools</strong>: Webpack, Babel</li>
+                        <li><strong>Testing Tools</strong>: Jest, PyTest</li>
+                    </ul>
+                </section>
+                
+                <section id="technologies">
+                    <h3>7.2 Technologies</h3>
+                    
+                    <h4>7.2.1 Frontend Technologies</h4>
+                    <ul>
+                        <li>React 19.1.0</li>
+                        <li>Socket.io-client 4.8.1</li>
+                        <li>React Router 7.6.2</li>
+                        <li>Bootstrap 5.3.6</li>
+                        <li>Chart.js 4.4.9</li>
+                    </ul>
+                    
+                    <h4>7.2.2 Backend Technologies</h4>
+                    <ul>
+                        <li>Node.js 20.0.0</li>
+                        <li>Express 4.18.2</li>
+                        <li>Socket.io 4.7.2</li>
+                        <li>MongoDB 7.0.0</li>
+                        <li>JWT 9.0.2</li>
+                    </ul>
+                    
+                    <h4>7.2.3 Analysis Technologies</h4>
+                    <ul>
+                        <li>Python 3.11.0</li>
+                        <li>Flask 3.0.0</li>
+                        <li>OpenCV 4.8.0</li>
+                        <li>MediaPipe 0.10.0</li>
+                        <li>NumPy 1.24.0</li>
+                    </ul>
+                </section>
+                
+                <section id="deployment-tools">
+                    <h3>7.3 Deployment Tools</h3>
+                    <p>Tools used for deployment and monitoring:</p>
+                    <ul>
+                        <li><strong>Containerization</strong>: Docker, Docker Compose</li>
+                        <li><strong>CI/CD</strong>: GitHub Actions</li>
+                        <li><strong>Monitoring</strong>: Prometheus, Grafana</li>
+                        <li><strong>Logging</strong>: ELK Stack</li>
+                        <li><strong>Hosting</strong>: AWS, DigitalOcean</li>
+                    </ul>
+                </section>
+            </section>
+        </div>
+    </div>
+</body>
+</html> 

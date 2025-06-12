@@ -1,0 +1,2191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Monitoring in Online Classes - Documentation</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: 'dark',
+                securityLevel: 'loose',
+                fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif',
+            });
+        });
+    </script>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f9f9f9;
+            --text-color: #333;
+            --code-bg: #1e1e1e;
+            --code-text: #e0e0e0;
+            --code-comment: #6a9955;
+            --code-keyword: #569cd6;
+            --code-string: #ce9178;
+            --code-function: #dcdcaa;
+            --code-variable: #9cdcfe;
+            --border-color: #ddd;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--secondary-color);
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: white;
+            margin-top: 0;
+        }
+
+        h2 {
+            font-size: 1.8em;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 5px;
+        }
+
+        h3 {
+            font-size: 1.5em;
+        }
+
+        h4 {
+            font-size: 1.2em;
+        }
+
+        p, ul, ol {
+            margin-bottom: 1em;
+        }
+
+        ul, ol {
+            padding-left: 20px;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 15px;
+            overflow-x: auto;
+            margin: 15px 0;
+            color: var(--code-text);
+        }
+
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--code-bg);
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: var(--code-text);
+        }
+
+        pre code {
+            padding: 0;
+            background-color: transparent;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table, th, td {
+            border: 1px solid var(--border-color);
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .sidebar {
+            flex: 0 0 300px;
+            background-color: #141414;
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            position: sticky;
+            top: 20px;
+            height: calc(100vh - 40px);
+            overflow-y: auto;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .nav-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .nav-list li {
+            margin-bottom: 10px;
+        }
+
+        .nav-list li a {
+            display: block;
+            padding: 5px;
+        }
+
+        .nav-list li a:hover {
+            background-color: var(--background-color);
+            border-radius: 3px;
+        }
+
+        .nav-list ul {
+            list-style-type: none;
+            padding-left: 15px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+        }
+
+        .note {
+            background-color: #d1ecf1;
+            border-left: 5px solid #0c5460;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                flex: 0 0 auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                height: auto;
+                position: relative;
+            }
+        }
+
+        /* Code syntax highlighting */
+        .code-comment { color: var(--code-comment); }
+        .code-keyword { color: var(--code-keyword); }
+        .code-string { color: var(--code-string); }
+        .code-function { color: var(--code-function); }
+        .code-variable { color: var(--code-variable); }
+        .code-number { color: #b5cea8; }
+        .code-operator { color: #d4d4d4; }
+        .code-class { color: #4ec9b0; }
+        .code-punctuation { color: #d4d4d4; }
+
+        .mermaid {
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+        
+        .chart-container {
+            background-color: #1e1e1e;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .chart-container h4 {
+            color: var(--code-text);
+            margin-bottom: 15px;
+        }
+        
+        .flowchart-fallback {
+            display: block;
+            padding: 15px;
+            background-color: #f44336;
+            color: white;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Student Monitoring in Online Classes</h1>
+        <p>An Advanced Educational Platform with Real-time Attention Analysis</p>
+    </header>
+
+    <div class="container">
+        <nav class="sidebar">
+            <ul class="nav-list">
+                <li><a href="#overview">1. Project Overview</a></li>
+                <li><a href="#architecture">2. System Architecture</a></li>
+                <li><a href="#components">3. Component Details</a>
+                    <ul>
+                        <li><a href="#frontend">3.1 React Frontend</a></li>
+                        <li><a href="#server">3.2 Node.js Server</a></li>
+                        <li><a href="#attention-server">3.3 Python Attention Server</a></li>
+                    </ul>
+                </li>
+                <li><a href="#database">4. Database Schema</a></li>
+                <li><a href="#workflows">5. Detailed Workflows</a>
+                    <ul>
+                        <li><a href="#auth-flow">5.1 Authentication Flow</a></li>
+                        <li><a href="#room-flow">5.2 Room Management</a></li>
+                        <li><a href="#webrtc-flow">5.3 WebRTC Connection</a></li>
+                        <li><a href="#attention-flow">5.4 Attention Monitoring</a></li>
+                    </ul>
+                </li>
+                <li><a href="#detailed-implementation">6. Detailed Implementation</a>
+                    <ul>
+                        <li><a href="#component-interaction">6.1 Component Interaction</a></li>
+                        <li><a href="#api-endpoints">6.2 API Endpoints</a></li>
+                        <li><a href="#data-flow-detailed">6.3 Detailed Data Flow</a></li>
+                        <li><a href="#user-journey">6.4 User Journey</a></li>
+                    </ul>
+                </li>
+                <li><a href="#setup">7. Setup & Deployment</a></li>
+                <li><a href="#conclusion">8. Conclusion</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section id="overview" class="section">
+                <h2>Project Overview</h2>
+                <p>Student Monitoring in Online Classes is an educational technology platform specifically designed to address the challenges of remote learning by providing educators with real-time insights into student engagement. The system consists of three main components:</p>
+                <ol>
+                    <li><strong>Educational User Interface</strong>: A React-based frontend providing intuitive classroom management and monitoring tools</li>
+                    <li><strong>Communication Server</strong>: A Node.js server handling secure connections, classroom management, and real-time data exchange</li>
+                    <li><strong>Attention Analysis Engine</strong>: A Python-based computer vision system that processes video frames to evaluate student attention levels</li>
+                </ol>
+                <p>The platform enables educators to create virtual classrooms, manage student participation, and receive detailed analytics on attention patterns throughout lessons. The attention monitoring capabilities can identify when students are engaged, distracted, or absent, allowing for timely interventions and personalized teaching strategies.</p>
+                
+                <p>Key educational applications include:</p>
+                <ul>
+                    <li>Real-time monitoring of student engagement during lectures</li>
+                    <li>Historical attention data analysis to identify difficult content or optimal teaching times</li>
+                    <li>Automatic notifications when multiple students show signs of disengagement</li>
+                    <li>Personalized learning adjustments based on individual attention patterns</li>
+                    <li>Educational research on remote learning effectiveness</li>
+                </ul>
+            </section>
+
+            <section id="architecture">
+                <h2>2. System Architecture</h2>
+                <div class="mermaid">
+                    graph TD
+                        A["React Frontend (rtc-app-react)"] --> B["Node.js Server (server)"]
+                        A --> C["Python Attention Server (attention_server)"]
+                        B --> D["MongoDB Database"]
+                        
+                        subgraph "Frontend Components"
+                            A1["React Components"] --> A2["Video Components"]
+                            A1 --> A3["Attention Monitoring"]
+                            A1 --> A4["Chat/UI Components"]
+                            A1 --> A5["Authentication"]
+                        end
+                        
+                        subgraph "WebRTC Server"
+                            B1["Socket.io Connection"] --> B2["Room Management"]
+                            B1 --> B3["WebRTC Signaling"]
+                            B1 --> B4["Authentication"]
+                            B2 --> B5["Session Management"]
+                        end
+                        
+                        subgraph "Attention Analysis"
+                            C1["Face Detection"] --> C2["Eye Tracking"]
+                            C1 --> C3["Head Position Analysis"]
+                            C2 --> C4["Attention State Detection"]
+                            C3 --> C4
+                        end
+                        
+                        A2 <--> B1
+                        A3 <--> C
+                        B5 <--> D
+                </div>
+                <noscript>
+                    <div class="flowchart-fallback">System Architecture Diagram - Enable JavaScript to view interactive diagrams</div>
+                </noscript>
+
+                <h3>Core Technologies</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Component</th>
+                            <th>Technologies</th>
+                            <th>Purpose</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Frontend</td>
+                            <td>React 19.1.0, Socket.io-client 4.8.1, React Router 7.6.2, Bootstrap 5.3.6, Chart.js 4.4.9</td>
+                            <td>User interface and client-side processing</td>
+                        </tr>
+                        <tr>
+                            <td>Main Server</td>
+                            <td>Node.js, Express, Socket.io, MongoDB, JWT</td>
+                            <td>WebRTC signaling, room management, authentication</td>
+                        </tr>
+                        <tr>
+                            <td>Attention Server</td>
+                            <td>Python, Flask, OpenCV, MediaPipe, NumPy</td>
+                            <td>Computer vision processing for attention monitoring</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Communication Protocols</h3>
+                <ul>
+                    <li><strong>HTTP/HTTPS</strong>: Used for REST API calls between components</li>
+                    <li><strong>WebSockets (via Socket.io)</strong>: Real-time communication for signaling and updates</li>
+                    <li><strong>WebRTC</strong>: Peer-to-peer media streams directly between clients</li>
+                    <li><strong>JSON</strong>: Data format for all API requests/responses</li>
+                </ul>
+
+                <h3>Data Flow</h3>
+                <div class="mermaid">
+                    sequenceDiagram
+                        participant User
+                        participant React as "React Client"
+                        participant Server as "Node.js Server"
+                        participant Attention as "Attention Server"
+                        participant DB as "MongoDB"
+                        
+                        User->>React: Join Video Conference
+                        React->>Server: Socket Connect
+                        React->>Server: authenticate()
+                        Server->>DB: Verify User
+                        DB-->>Server: User Data
+                        Server-->>React: Auth Token
+                        
+                        React->>Server: create-room or join-room
+                        Server->>DB: Create/Find Room
+                        Server-->>React: Room Joined
+                        
+                        Note over React,Server: WebRTC Signaling
+                        React->>Server: offer
+                        Server->>React: Forward to peers
+                        React->>Server: answer
+                        Server->>React: Forward to original peer
+                        React->>Server: ice-candidate
+                        Server->>React: Forward to relevant peers
+                        
+                        Note over React,Attention: Attention Monitoring
+                        React->>Attention: POST /api/detect_attention
+                        Attention-->>React: Attention State
+                        React->>Server: broadcast-attention-update
+                        Server->>React: Forward to room host
+                </div>
+                <noscript>
+                    <div class="flowchart-fallback">Data Flow Diagram - Enable JavaScript to view interactive diagrams</div>
+                </noscript>
+            </section>
+
+            <section id="components">
+                <h2>3. Component Details</h2>
+
+                <section id="frontend">
+                    <h3>3.1 React Frontend (rtc-app-react)</h3>
+                    <p>The frontend is built with React and manages the user interface, WebRTC connections, and interaction with both servers.</p>
+
+                    <h4>Directory Structure</h4>
+<pre><code>rtc-app-react/
+├── src/
+│   ├── components/
+│   │   ├── attention/       # Attention monitoring components
+│   │   ├── auth/            # Authentication components
+│   │   ├── chat/            # Chat functionality
+│   │   ├── controls/        # Media and room controls
+│   │   ├── room/            # Room creation and joining
+│   │   ├── ui/              # Reusable UI components
+│   │   └── video/           # WebRTC video handling
+│   ├── context/             # React context providers
+│   ├── hooks/               # Custom React hooks
+│   ├── utils/               # Utility functions
+│   ├── styles/              # CSS and styling
+│   ├── App.js               # Main application component
+│   └── index.js             # Application entry point
+└── public/                  # Static assets</code></pre>
+
+                    <h4>Key Features</h4>
+                    <ul>
+                        <li>User authentication (login/register)</li>
+                        <li>Room creation with optional password protection</li>
+                        <li>Device selection (camera/microphone)</li>
+                        <li>Real-time video/audio communication</li>
+                        <li>Text chat</li>
+                        <li>Attention monitoring visualization</li>
+                        <li>Responsive UI for different screen sizes</li>
+                    </ul>
+
+                    <h4>Context System</h4>
+                    <p>The application uses React Context API for global state management:</p>
+                    <ul>
+                        <li><strong>SocketContext</strong>: Manages WebSocket connection and WebRTC peer connections</li>
+                        <li><strong>AttentionContext</strong>: Manages attention monitoring state and API calls</li>
+                        <li><strong>AuthContext</strong>: Manages user authentication state and methods</li>
+                        <li><strong>AppStateContext</strong>: Manages application-wide UI state</li>
+                    </ul>
+                </section>
+
+                <section id="server">
+                    <h3>3.2 Node.js Server (server)</h3>
+                    <p>The Node.js server handles signaling for WebRTC connections, room management, authentication, and database operations.</p>
+
+                    <h4>Directory Structure</h4>
+<pre><code>server/
+├── index.js              # Main server entry point
+├── db.js                 # Database connection and models
+├── middleware/           # Express middleware
+│   └── auth.js           # JWT authentication middleware
+├── models/               # MongoDB schemas
+│   └── User.js           # User model
+├── routes/               # Express routes
+│   └── auth.js           # Authentication routes
+├── services/             # Business logic
+│   └── AuthService.js    # Authentication service
+└── utils/                # Utility functions</code></pre>
+
+                    <h4>Key Features</h4>
+                    <ul>
+                        <li>Socket.io server for real-time communication</li>
+                        <li>JWT-based authentication system</li>
+                        <li>MongoDB integration for data persistence</li>
+                        <li>Room creation and management</li>
+                        <li>WebRTC signaling (offer/answer exchange, ICE candidates)</li>
+                        <li>Session management and restoration</li>
+                        <li>Chat message relay</li>
+                    </ul>
+                </section>
+
+                <section id="attention-server">
+                    <h3>3.3 Python Attention Server (attention_server)</h3>
+                    <p>The Python attention server uses computer vision techniques to analyze video frames and determine user attention states.</p>
+
+                    <h4>Key Technologies</h4>
+                    <ul>
+                        <li>Flask for API endpoints</li>
+                        <li>OpenCV for image processing</li>
+                        <li>MediaPipe for face detection and facial landmark tracking</li>
+                        <li>NumPy for numerical operations</li>
+                    </ul>
+
+                    <h4>Attention Detection Pipeline</h4>
+                    <ol>
+                        <li>Decode base64 image to OpenCV format</li>
+                        <li>Analyze image brightness and contrast</li>
+                        <li>Detect face presence using MediaPipe Face Detection</li>
+                        <li>Extract facial landmarks using MediaPipe Face Mesh</li>
+                        <li>Calculate eye aspect ratio to detect blinks and drowsiness</li>
+                        <li>Analyze head orientation (yaw, pitch, roll)</li>
+                        <li>Combine measurements to determine attention state</li>
+                        <li>Track attention history for each user</li>
+                    </ol>
+
+                    <h4>Attention States</h4>
+                    <ul>
+                        <li><strong>Attentive</strong>: User is looking at the screen</li>
+                        <li><strong>Looking Away</strong>: User is present but looking elsewhere</li>
+                        <li><strong>Absent</strong>: No user detected</li>
+                        <li><strong>Drowsy/Sleeping</strong>: User appears to be falling asleep</li>
+                        <li><strong>Darkness</strong>: Insufficient lighting to analyze properly</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section id="database">
+                <h2>4. Database Schema</h2>
+                <p>The application uses MongoDB with the following main collections:</p>
+
+                <h4>Users</h4>
+<pre><code>{
+  userId: String,
+  email: String,
+  password: String (hashed),
+  name: String,
+  created: Date,
+  lastLogin: Date
+}</code></pre>
+
+                <h4>Sessions</h4>
+<pre><code>{
+  sessionId: String,
+  userId: String,
+  userName: String,
+  lastActive: Date,
+  created: Date
+}</code></pre>
+
+                <h4>Rooms</h4>
+<pre><code>{
+  roomId: String,
+  creatorId: String,
+  password: String (optional),
+  isPasswordProtected: Boolean,
+  created: Date,
+  lastActive: Date,
+  participants: [
+    {
+      userId: String,
+      displayName: String,
+      joinedAt: Date,
+      inactive: Boolean,
+      disconnectedAt: Date
+    }
+  ]
+}</code></pre>
+            </section>
+
+            <section id="workflows">
+                <h2>5. Detailed Workflows</h2>
+
+                <section id="auth-flow">
+                    <h3>5.1 Authentication Flow</h3>
+                    <div class="mermaid">
+                        sequenceDiagram
+                            participant User
+                            participant React as "React Client"
+                            participant Server as "Node.js Server"
+                            participant DB as "MongoDB"
+                            
+                            User->>React: Register/Login
+                            React->>Server: POST /api/auth/register or /api/auth/login
+                            Server->>DB: Create/Find User
+                            DB-->>Server: User Data
+                            Server-->>React: Auth Token
+                            
+                            React->>Server: authenticate()
+                            Server->>React: Verify Token
+                            Server-->>React: User Data
+                    </div>
+                    <noscript>
+                        <div class="flowchart-fallback">Authentication Flow Diagram - Enable JavaScript to view interactive diagrams</div>
+                    </noscript>
+
+                    <p>The authentication system follows these steps:</p>
+                    <ol>
+                        <li>User registers with email/password or logs in with existing credentials</li>
+                        <li>Server validates credentials and issues a JWT token</li>
+                        <li>React client stores token in local storage and includes it in subsequent requests</li>
+                        <li>Socket.io connections use the token for authentication</li>
+                        <li>Protected routes in React verify token validity before rendering</li>
+                    </ol>
+                </section>
+
+                <section id="room-flow">
+                    <h3>5.2 Room Management Flow</h3>
+                    <div class="mermaid">
+                        sequenceDiagram
+                            participant User
+                            participant React as "React Client"
+                            participant Server as "Node.js Server"
+                            participant DB as "MongoDB"
+                            
+                            User->>React: Create Room
+                            React->>Server: Socket Connect
+                            React->>Server: authenticate()
+                            Server->>DB: Verify User
+                            DB-->>Server: User Data
+                            Server-->>React: Room Created
+                            
+                            User->>React: Join Room
+                            React->>Server: Socket Connect
+                            React->>Server: authenticate()
+                            Server->>DB: Verify Room
+                            DB-->>Server: Room Data
+                            Server-->>React: Room Joined
+                    </div>
+                    <noscript>
+                        <div class="flowchart-fallback">Room Management Flow Diagram - Enable JavaScript to view interactive diagrams</div>
+                    </noscript>
+
+                    <h4>Room Creation</h4>
+                    <ol>
+                        <li>User clicks "Create Room" in the UI</li>
+                        <li>Client sends create-room socket event with optional password</li>
+                        <li>Server generates unique 6-character room ID</li>
+                        <li>Server creates room record in memory and database</li>
+                        <li>Server responds with room details and joins creator to room</li>
+                    </ol>
+
+                    <h4>Room Joining</h4>
+                    <ol>
+                        <li>User enters room ID (and optional password)</li>
+                        <li>Client sends join-room socket event with credentials</li>
+                        <li>Server verifies room exists and password (if protected)</li>
+                        <li>Server adds user to room participants</li>
+                        <li>Server notifies existing participants with user-joined event</li>
+                    </ol>
+                </section>
+
+                <section id="webrtc-flow">
+                    <h3>5.3 WebRTC Connection Flow</h3>
+                    <div class="mermaid">
+                        sequenceDiagram
+                            participant ClientA as "User A (Caller)"
+                            participant Server as "Signaling Server"
+                            participant ClientB as "User B (Callee)"
+                            
+                            Note over ClientA, ClientB: Signaling Phase
+                            ClientA->>Server: Join Room
+                            Server->>ClientB: User A joined
+                            ClientA->>ClientA: Create RTCPeerConnection
+                            
+                            ClientA->>ClientA: Create Offer
+                            ClientA->>ClientA: Set Local Description
+                            ClientA->>Server: Send Offer
+                            Server->>ClientB: Forward Offer
+                            
+                            ClientB->>ClientB: Create RTCPeerConnection
+                            ClientB->>ClientB: Set Remote Description (Offer)
+                            ClientB->>ClientB: Create Answer
+                            ClientB->>ClientB: Set Local Description
+                            ClientB->>Server: Send Answer
+                            Server->>ClientA: Forward Answer
+                            
+                            ClientA->>ClientA: Set Remote Description (Answer)
+                            
+                            Note over ClientA, ClientB: ICE Candidate Exchange
+                            ClientA->>Server: ICE candidate
+                            Server->>ClientB: Forward ICE candidate
+                            ClientB->>Server: ICE candidate
+                            Server->>ClientA: Forward ICE candidate
+                            
+                            Note over ClientA, ClientB: Direct Connection Established
+                            ClientA->>ClientB: Media streams (direct P2P)
+                    </div>
+                    <noscript>
+                        <div class="flowchart-fallback">WebRTC Connection Flow Diagram - Enable JavaScript to view interactive diagrams</div>
+                    </noscript>
+
+                    <h4>Signaling and Media Exchange</h4>
+                    <ol>
+                        <li>When user A joins a room, socket server notifies all participants</li>
+                        <li>For each existing participant (user B), user A creates an RTCPeerConnection</li>
+                        <li>User A creates an SDP offer and sends it to user B through signaling server</li>
+                        <li>User B creates an SDP answer and sends it to user A through signaling server</li>
+                        <li>Both peers exchange ICE candidates through signaling server</li>
+                        <li>When connection is established, media streams are exchanged directly between peers</li>
+                    </ol>
+                    
+                    <h4>WebRTC Implementation Details</h4>
+                    <p>The WebRTC connection process involves several critical components and steps:</p>
+                    
+                    <h5>1. Media Stream Acquisition</h5>
+                    <pre><code>// In VideoChat.js or similar component
+const getLocalStream = async () => {
+  try {
+    // Request camera and microphone access
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        width: { ideal: 1280 },
+        height: { ideal: 720 },
+        facingMode: 'user'
+      },
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true
+      }
+    });
+    
+    // Set stream to state
+    setLocalStream(stream);
+    
+    // Notify server that we're ready to connect
+    socket.emit('ready', { roomId });
+    
+  } catch (error) {
+    console.error('Error accessing media devices:', error);
+    setError('Failed to access camera or microphone. Please check permissions.');
+  }
+};</code></pre>
+                    
+                    <h5>2. Peer Connection Setup</h5>
+                    <pre><code>// In SocketContext.js or similar context provider
+const createPeerConnection = (participantId) => {
+  // Configure ICE servers (STUN/TURN)
+  const configuration = {
+    iceServers: [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+      // TURN servers would be added here for production
+    ]
+  };
+  
+  // Create new peer connection
+  const pc = new RTCPeerConnection(configuration);
+  
+  // Add all local tracks to the connection
+  if (localStream) {
+    localStream.getTracks().forEach(track => {
+      pc.addTrack(track, localStream);
+    });
+  }
+  
+  // Handle ICE candidate generation
+  pc.onicecandidate = (event) => {
+    if (event.candidate) {
+      // Send candidate to the peer through signaling server
+      socket.emit('ice-candidate', {
+        candidate: event.candidate,
+        targetUserId: participantId
+      });
+    }
+  };
+  
+  // Handle connection state changes
+  pc.onconnectionstatechange = (event) => {
+    switch(pc.connectionState) {
+      case 'connected':
+        console.log('Connection established with', participantId);
+        break;
+      case 'disconnected':
+      case 'failed':
+        console.log('Connection lost with', participantId);
+        // Handle reconnection logic
+        break;
+      case 'closed':
+        console.log('Connection closed with', participantId);
+        // Clean up resources
+        break;
+    }
+  };
+  
+  // Handle incoming remote tracks
+  pc.ontrack = (event) => {
+    // Update remote streams state
+    setRemoteStreams(prev => ({
+      ...prev,
+      [participantId]: event.streams[0]
+    }));
+  };
+  
+  return pc;
+};</code></pre>
+                    
+                    <h5>3. SDP Offer Creation (Initiator)</h5>
+                    <pre><code>// Initiating a connection (caller)
+const createOffer = async (participantId) => {
+  try {
+    const pc = peerConnections[participantId] || createPeerConnection(participantId);
+    
+    // Create offer
+    const offer = await pc.createOffer({
+      offerToReceiveAudio: true,
+      offerToReceiveVideo: true
+    });
+    
+    // Set local description
+    await pc.setLocalDescription(offer);
+    
+    // Send offer to peer through signaling server
+    socket.emit('offer', {
+      offer: pc.localDescription,
+      targetUserId: participantId
+    });
+    
+    // Store peer connection
+    setPeerConnections(prev => ({
+      ...prev,
+      [participantId]: pc
+    }));
+    
+  } catch (error) {
+    console.error('Error creating offer:', error);
+  }
+};</code></pre>
+                    
+                    <h5>4. SDP Answer Creation (Receiver)</h5>
+                    <pre><code>// Handling an incoming offer (callee)
+socket.on('offer', async (data) => {
+  try {
+    const { offer, offererUserId } = data;
+    
+    // Create peer connection if it doesn't exist
+    const pc = peerConnections[offererUserId] || createPeerConnection(offererUserId);
+    
+    // Check if offer is valid
+    if (!pc.remoteDescription && offer) {
+      // Set remote description from the offer
+      await pc.setRemoteDescription(new RTCSessionDescription(offer));
+      
+      // Create answer
+      const answer = await pc.createAnswer();
+      
+      // Set local description
+      await pc.setLocalDescription(answer);
+      
+      // Send answer back to offerer through signaling server
+      socket.emit('answer', {
+        answer: pc.localDescription,
+        targetUserId: offererUserId
+      });
+      
+      // Store peer connection
+      setPeerConnections(prev => ({
+        ...prev,
+        [offererUserId]: pc
+      }));
+    }
+  } catch (error) {
+    console.error('Error handling offer:', error);
+  }
+});</code></pre>
+                    
+                    <h5>5. ICE Candidate Handling</h5>
+                    <pre><code>// Handling incoming ICE candidates
+socket.on('ice-candidate', async (data) => {
+  try {
+    const { candidate, senderUserId } = data;
+    
+    // Get the peer connection for this user
+    const pc = peerConnections[senderUserId];
+    
+    if (pc && candidate) {
+      // Add the ICE candidate to the connection
+      await pc.addIceCandidate(new RTCIceCandidate(candidate));
+    }
+  } catch (error) {
+    console.error('Error adding ICE candidate:', error);
+  }
+});</code></pre>
+                    
+                    <h5>6. Media Stream Management</h5>
+                    <pre><code>// Toggling audio/video tracks
+const toggleAudio = (enabled) => {
+  if (localStream) {
+    localStream.getAudioTracks().forEach(track => {
+      track.enabled = enabled;
+    });
+  }
+};
+
+const toggleVideo = (enabled) => {
+  if (localStream) {
+    localStream.getVideoTracks().forEach(track => {
+      track.enabled = enabled;
+    });
+  }
+};
+
+// Replacing a track (e.g., when changing camera)
+const switchCamera = async (deviceId) => {
+  try {
+    // Get new stream with selected camera
+    const newStream = await navigator.mediaDevices.getUserMedia({
+      video: { deviceId: { exact: deviceId } },
+      audio: false
+    });
+    
+    const newVideoTrack = newStream.getVideoTracks()[0];
+    
+    // Replace track in all peer connections
+    Object.values(peerConnections).forEach(pc => {
+      const senders = pc.getSenders();
+      const videoSender = senders.find(sender => 
+        sender.track && sender.track.kind === 'video'
+      );
+      
+      if (videoSender) {
+        videoSender.replaceTrack(newVideoTrack);
+      }
+    });
+    
+    // Update local stream
+    const oldVideoTrack = localStream.getVideoTracks()[0];
+    if (oldVideoTrack) {
+      localStream.removeTrack(oldVideoTrack);
+      oldVideoTrack.stop();
+    }
+    localStream.addTrack(newVideoTrack);
+    
+    // Update state
+    setLocalStream(new MediaStream([
+      ...localStream.getAudioTracks(),
+      newVideoTrack
+    ]));
+    
+  } catch (error) {
+    console.error('Error switching camera:', error);
+  }
+};</code></pre>
+                    
+                    <h5>7. Connection Cleanup</h5>
+                    <pre><code>// Cleaning up connections when leaving room
+const leaveRoom = () => {
+  // Stop all tracks in local stream
+  if (localStream) {
+    localStream.getTracks().forEach(track => {
+      track.stop();
+    });
+  }
+  
+  // Close all peer connections
+  Object.values(peerConnections).forEach(pc => {
+    pc.close();
+  });
+  
+  // Reset state
+  setPeerConnections({});
+  setRemoteStreams({});
+  setLocalStream(null);
+  
+  // Notify server
+  socket.emit('leave-room');
+  
+  // Navigate away
+  navigate('/');
+};</code></pre>
+                    
+                    <h4>NAT Traversal and ICE</h4>
+                    <p>WebRTC uses Interactive Connectivity Establishment (ICE) protocol to overcome Network Address Translation (NAT) and firewall obstacles:</p>
+                    <ol>
+                        <li><strong>STUN (Session Traversal Utilities for NAT)</strong>: Allows peers to discover their public IP address</li>
+                        <li><strong>TURN (Traversal Using Relays around NAT)</strong>: Provides relay servers when direct connection is impossible</li>
+                        <li><strong>ICE Candidates</strong>: Represent potential connection methods between peers</li>
+                        <li><strong>Trickle ICE</strong>: Optimization where candidates are sent as they're discovered rather than all at once</li>
+                    </ol>
+                    
+                    <h4>Media Quality Considerations</h4>
+                    <p>The application implements several techniques to maintain media quality:</p>
+                    <ul>
+                        <li><strong>Bandwidth Adaptation</strong>: Adjusting video quality based on available bandwidth</li>
+                        <li><strong>Connection Monitoring</strong>: Tracking RTCPeerConnection statistics to identify issues</li>
+                        <li><strong>Audio Processing</strong>: Using echo cancellation and noise suppression</li>
+                        <li><strong>Video Constraints</strong>: Setting appropriate resolution and frame rate</li>
+                    </ul>
+                </section>
+
+                <section id="attention-flow">
+                    <h3>5.4 Attention Monitoring Pipeline</h3>
+                    <div class="mermaid">
+                        flowchart TD
+                            Start[Client Video Frame] --> B[Capture Frame via Canvas]
+                            B --> C[Convert to Base64]
+                            C --> D[Send to Attention Server]
+                            
+                            D --> E{Process Frame}
+                            E --> F[Brightness Analysis]
+                            E --> G[Face Detection]
+                            E --> H[Facial Landmark Extraction]
+                            
+                            F --> I{Brightness Check}
+                            I -- Low --> J[Classify as 'Darkness']
+                            I -- Normal --> G
+                            
+                            G --> K{Face Present?}
+                            K -- No --> L[Classify as 'Absent']
+                            K -- Yes --> M[Extract Eye Landmarks]
+                            
+                            M --> N[Calculate Eye Aspect Ratio]
+                            N --> O{Eye Open?}
+                            O -- Closed --> P[Classify as 'Sleeping']
+                            O -- Partially --> Q[Classify as 'Drowsy']
+                            O -- Open --> R[Analyze Head Position]
+                            
+                            R --> S{Looking at Camera?}
+                            S -- Yes --> T[Classify as 'Attentive']
+                            S -- No --> U[Classify as 'Looking Away']
+                            
+                            J --> V[Return Attention State]
+                            L --> V
+                            P --> V
+                            Q --> V
+                            T --> V
+                            U --> V
+                            
+                            V --> W[Update Client UI]
+                            W --> X[Send to Host via Signaling]
+                            X --> Y[Aggregate Class Attention]
+                    </div>
+                    <noscript>
+                        <div class="flowchart-fallback">Attention Monitoring Pipeline Diagram - Enable JavaScript to view interactive diagrams</div>
+                    </noscript>
+
+                    <h4>Video Processing Workflow</h4>
+                    <ol>
+                        <li>Client captures video frames at regular intervals (every 5 seconds)</li>
+                        <li>Frame is converted to base64 format and sent to attention server</li>
+                        <li>Server processes the frame through multiple analysis stages:
+                            <ul>
+                                <li>Brightness and contrast analysis</li>
+                                <li>Face detection</li>
+                                <li>Facial landmark extraction</li>
+                                <li>Eye state analysis</li>
+                                <li>Head orientation analysis</li>
+                            </ul>
+                        </li>
+                        <li>Server determines attention state classification:
+                            <ul>
+                                <li>Attentive: Face present, eyes open, looking at camera</li>
+                                <li>Looking Away: Face present, but looking elsewhere</li>
+                                <li>Absent: No face detected in frame</li>
+                                <li>Drowsy: Face present, eyes partially closed</li>
+                                <li>Sleeping: Face present, eyes closed</li>
+                                <li>Darkness: Insufficient lighting for detection</li>
+                            </ul>
+                        </li>
+                        <li>Client receives attention state and updates UI</li>
+                        <li>Room host receives aggregated attention data for all participants</li>
+                    </ol>
+                    
+                    <h4>Attention Detection Implementation Details</h4>
+                    
+                    <h5>1. Client-Side Frame Capture</h5>
+                    <pre><code>// In AttentionMonitor.js
+const captureAndProcessFrame = () => {
+  const video = videoRef.current;
+  const canvas = canvasRef.current;
+  
+  if (!video || !canvas || video.paused || video.ended) return;
+  
+  // Set canvas dimensions to match video
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  
+  // Draw video frame to canvas
+  const context = canvas.getContext('2d');
+  context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  
+  // Convert canvas to base64 image
+  const frame = canvas.toDataURL('image/jpeg', 0.8); // 0.8 quality for better performance
+  
+  // Send to attention server
+  detectAttention(frame);
+};
+
+// Set up interval for frame capture
+useEffect(() => {
+  if (!isMonitoringEnabled) return;
+  
+  frameInterval.current = setInterval(() => {
+    captureAndProcessFrame();
+  }, 5000); // Process every 5 seconds
+  
+  return () => clearInterval(frameInterval.current);
+}, [isMonitoringEnabled]);</code></pre>
+
+                    <h5>2. API Call to Attention Server</h5>
+                    <pre><code>// In AttentionContext.js
+const detectAttention = async (videoFrame) => {
+  try {
+    // Show processing indicator if needed
+    setIsProcessing(true);
+    
+    // Prepare request payload
+    const payload = {
+      image: videoFrame,
+      userId: currentUserId
+    };
+    
+    // Send to attention server
+    const response = await fetch(`${ATTENTION_SERVER_URL}/api/detect_attention`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+    
+    // Parse response
+    const data = await response.json();
+    
+    if (data.error) {
+      throw new Error(data.error);
+    }
+    
+    // Update attention state
+    setAttentionState(data.attention_state);
+    
+    // Update measurements
+    setMeasurements(data.measurements);
+    
+    // Add to history
+    updateAttentionHistory(data.attention_state);
+    
+    // Broadcast to host if in a room
+    if (socket && roomId) {
+      socket.emit('attention-update', {
+        state: data.attention_state,
+        measurements: data.measurements,
+        confidence: data.confidence
+      });
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Error detecting attention:', error);
+    setAttentionState('error');
+    return null;
+  } finally {
+    setIsProcessing(false);
+  }
+};</code></pre>
+
+                    <h5>3. Server-Side Face Detection</h5>
+                    <pre><code># In app.py (Python Attention Server)
+def detect_face_mediapipe(cv_image):
+    """
+    Use MediaPipe to detect faces in the image
+    Returns face detection results and a confidence score
+    """
+    image_rgb = cv2.cvtColor(cv_image, cv2.COLOR_BGR2RGB)
+    results = face_detection.process(image_rgb)
+    
+    if not results.detections:
+        return None, 0.0
+    
+    # Get the first detected face
+    detection = results.detections[0]
+    confidence = detection.score[0]
+    
+    # Get bounding box
+    bbox = detection.location_data.relative_bounding_box
+    h, w, _ = cv_image.shape
+    bbox_coords = {
+        'xmin': int(bbox.xmin * w),
+        'ymin': int(bbox.ymin * h),
+        'width': int(bbox.width * w),
+        'height': int(bbox.height * h)
+    }
+    
+    return bbox_coords, confidence</code></pre>
+
+                    <h5>4. Eye State Analysis</h5>
+                    <pre><code># In app.py (Python Attention Server)
+def calculate_eye_aspect_ratio(eye_landmarks, image_shape):
+    """
+    Calculate the eye aspect ratio (EAR) to detect blinks and drowsiness
+    EAR = (height of the eye) / (width of the eye)
+    """
+    if not eye_landmarks:
+        return 0.0
+    
+    # Convert normalized coordinates to pixel coordinates
+    h, w = image_shape[0:2]
+    landmarks_px = [(int(point.x * w), int(point.y * h)) for point in eye_landmarks]
+    
+    # Compute the center of the eye
+    center_x = sum(x for x, _ in landmarks_px) / len(landmarks_px)
+    center_y = sum(y for _, y in landmarks_px) / len(landmarks_px)
+    
+    # Calculate horizontal and vertical distances
+    horizontal_points = [landmarks_px[0], landmarks_px[3]]  # Outer and inner corners
+    vertical_points = [landmarks_px[1], landmarks_px[5]]    # Top and bottom points
+    
+    # Calculate width and height
+    width = math.dist(horizontal_points[0], horizontal_points[1])
+    height = math.dist(vertical_points[0], vertical_points[1])
+    
+    # Calculate eye aspect ratio
+    ear = height / (width + 1e-6)  # Add small epsilon to prevent division by zero
+    
+    return ear</code></pre>
+
+                    <h5>5. Head Orientation Analysis</h5>
+                    <pre><code># In app.py (Python Attention Server)
+def detect_head_orientation(face_landmarks, image_shape):
+    """
+    Detect head orientation using facial landmarks
+    Returns the head yaw, pitch, and roll angles
+    """
+    if not face_landmarks:
+        return 0.0, 0.0, 0.0
+    
+    # Get key facial landmarks for orientation
+    h, w = image_shape[0:2]
+    
+    # Nose tip
+    nose_tip = face_landmarks.landmark[4]
+    nose_tip_px = (int(nose_tip.x * w), int(nose_tip.y * h))
+    
+    # Left and right cheeks
+    left_cheek = face_landmarks.landmark[234]  # Left cheek
+    right_cheek = face_landmarks.landmark[454]  # Right cheek
+    
+    left_cheek_px = (int(left_cheek.x * w), int(left_cheek.y * h))
+    right_cheek_px = (int(right_cheek.x * w), int(right_cheek.y * h))
+    
+    # Calculate horizontal position ratio (for yaw)
+    face_width = math.dist(left_cheek_px, right_cheek_px)
+    face_center_x = (left_cheek_px[0] + right_cheek_px[0]) / 2
+    
+    # Horizontal position relative to center of image
+    horizontal_position = (face_center_x - (w / 2)) / (w / 2)
+    
+    # Calculate yaw (looking left or right)
+    yaw = horizontal_position
+    
+    # Simple approximation of head tilt (roll)
+    roll = math.atan2(right_cheek_px[1] - left_cheek_px[1], right_cheek_px[0] - left_cheek_px[0])
+    roll = math.degrees(roll)
+    
+    # Simple approximation of pitch (looking up or down)
+    # Get forehead and chin points
+    forehead = face_landmarks.landmark[10]  # Forehead
+    chin = face_landmarks.landmark[152]     # Chin
+    
+    forehead_px = (int(forehead.x * w), int(forehead.y * h))
+    chin_px = (int(chin.x * w), int(chin.y * h))
+    
+    # Calculate vertical angle
+    face_height = math.dist(forehead_px, chin_px)
+    nose_to_face_height_ratio = (nose_tip_px[1] - forehead_px[1]) / (face_height + 1e-6)
+    
+    # Map ratio to pitch angle approximation
+    pitch = (nose_to_face_height_ratio - 0.5) * 2  # Normalize to [-1, 1] range
+    
+    return yaw, pitch, roll</code></pre>
+
+                    <h5>6. Attention State Classification</h5>
+                    <pre><code># In app.py (Python Attention Server)
+def detect_attention(pil_image, cv_image, user_id):
+    """
+    Main function to detect attention state
+    Uses a combination of face presence, eye state, and head position
+    """
+    # Initialize results dictionary
+    results = {
+        "attention_state": ABSENT,
+        "confidence": 0.0,
+        "measurements": {
+            "face_present": 0.0,
+            "looking_at_camera": 0.0,
+            "eye_openness": 0.0,
+            "head_position": 0.0,
+            "brightness": 0.0,
+            "contrast": 0.0
+        },
+        "details": {}
+    }
+    
+    # Check if image is too dark
+    brightness = analyze_image_brightness(pil_image)
+    contrast = analyze_image_contrast(pil_image)
+    
+    results["measurements"]["brightness"] = brightness
+    results["measurements"]["contrast"] = contrast
+    
+    if brightness < 30:  # Very dark image
+        results["attention_state"] = DARKNESS
+        results["confidence"] = 0.9
+        results["details"]["message"] = "Environment is too dark for accurate detection"
+        update_attention_history(user_id, DARKNESS)
+        return results
+    
+    # Analyze face presence
+    face_result = analyze_face_present(pil_image, cv_image)
+    face_present_score = face_result["face_present"]
+    results["measurements"]["face_present"] = face_present_score
+    results["details"]["face"] = face_result
+    
+    if face_present_score < 0.3:  # No face detected
+        results["attention_state"] = ABSENT
+        results["confidence"] = 1.0 - face_present_score
+        update_attention_history(user_id, ABSENT)
+        return results
+    
+    # Analyze eyes
+    eye_result = analyze_eye_area(pil_image, cv_image)
+    eye_openness_score = eye_result["eye_openness"]
+    results["measurements"]["eye_openness"] = eye_openness_score
+    results["details"]["eyes"] = eye_result
+    
+    # Check for drowsiness/sleeping
+    if eye_openness_score < 0.2:
+        results["attention_state"] = SLEEPING
+        results["confidence"] = 0.8
+        update_attention_history(user_id, SLEEPING)
+        return results
+    elif eye_openness_score < 0.5:
+        results["attention_state"] = DROWSY
+        results["confidence"] = 0.7
+        update_attention_history(user_id, DROWSY)
+        return results
+    
+    # Analyze head position
+    head_result = analyze_head_position(pil_image, cv_image)
+    looking_at_camera_score = head_result["looking_at_camera"]
+    results["measurements"]["looking_at_camera"] = looking_at_camera_score
+    results["details"]["head"] = head_result
+    
+    # Determine final attention state
+    if looking_at_camera_score > 0.7 and face_present_score > 0.7:
+        results["attention_state"] = ATTENTIVE
+        results["confidence"] = (looking_at_camera_score + face_present_score) / 2
+    elif looking_at_camera_score > 0.3 and face_present_score > 0.5:
+        results["attention_state"] = LOOKING_AWAY
+        results["confidence"] = looking_at_camera_score
+    else:
+        results["attention_state"] = ABSENT
+        results["confidence"] = 1.0 - face_present_score
+    
+    # Update user's attention history
+    update_attention_history(user_id, results["attention_state"])
+    
+    return results</code></pre>
+
+                    <h5>7. Host Attention Dashboard</h5>
+                    <pre><code>// In HostAttentionPanel.js
+const HostAttentionPanel = ({ onClose }) => {
+  const { socket, participants } = useContext(SocketContext);
+  const [attentionData, setAttentionData] = useState({});
+  const [aggregatedData, setAggregatedData] = useState({});
+  const [timeSeriesData, setTimeSeriesData] = useState([]);
+  
+  // Listen for attention updates from participants
+  useEffect(() => {
+    if (!socket) return;
+    
+    socket.on('attention-update', (data) => {
+      const { userId, state, displayName, measurements, confidence } = data;
+      
+      // Update participant attention data
+      setAttentionData(prev => ({
+        ...prev,
+        [userId]: {
+          state,
+          displayName,
+          measurements,
+          confidence,
+          timestamp: Date.now(),
+          history: [...(prev[userId]?.history || []), {
+            state,
+            timestamp: Date.now()
+          }]
+        }
+      }));
+    });
+    
+    return () => socket.off('attention-update');
+  }, [socket]);
+  
+  // Calculate aggregated statistics
+  useEffect(() => {
+    if (Object.keys(attentionData).length === 0) return;
+    
+    // Count states
+    const stateCounts = {
+      attentive: 0,
+      looking_away: 0,
+      absent: 0,
+      drowsy: 0,
+      sleeping: 0,
+      darkness: 0
+    };
+    
+    // Track active participants
+    const activeUsers = [];
+    
+    // Process each participant's data
+    Object.entries(attentionData).forEach(([userId, data]) => {
+      // Only include recent data (last 30 seconds)
+      const isRecent = (Date.now() - data.timestamp) < 30000;
+      
+      if (isRecent) {
+        stateCounts[data.state]++;
+        activeUsers.push(userId);
+      } else {
+        stateCounts.absent++;
+      }
+    });
+    
+    // Calculate percentages
+    const total = participants.length || 1; // Avoid division by zero
+    const percentages = {};
+    
+    Object.entries(stateCounts).forEach(([state, count]) => {
+      percentages[state] = Math.round((count / total) * 100);
+    });
+    
+    // Update aggregated data
+    setAggregatedData({
+      counts: stateCounts,
+      percentages,
+      activeCount: activeUsers.length,
+      totalCount: participants.length
+    });
+    
+    // Update time series data (for charts)
+    const timestamp = new Date();
+    setTimeSeriesData(prev => [
+      ...prev,
+      {
+        timestamp,
+        attentive: percentages.attentive,
+        looking_away: percentages.looking_away,
+        absent: percentages.absent,
+        drowsy: percentages.drowsy + percentages.sleeping,
+      }
+    ].slice(-20)); // Keep only last 20 data points
+    
+  }, [attentionData, participants]);
+  
+  // Render pie chart data
+  const pieChartData = {
+    labels: ['Attentive', 'Looking Away', 'Absent', 'Drowsy/Sleeping'],
+    datasets: [{
+      data: [
+        aggregatedData.percentages?.attentive || 0,
+        aggregatedData.percentages?.looking_away || 0,
+        aggregatedData.percentages?.absent || 0,
+        (aggregatedData.percentages?.drowsy || 0) + (aggregatedData.percentages?.sleeping || 0)
+      ],
+      backgroundColor: ['#4CAF50', '#FFC107', '#F44336', '#9C27B0']
+    }]
+  };
+  
+  // Render line chart data
+  const lineChartData = {
+    labels: timeSeriesData.map(d => d.timestamp.toLocaleTimeString()),
+    datasets: [
+      {
+        label: 'Attentive',
+        data: timeSeriesData.map(d => d.attentive),
+        borderColor: '#4CAF50',
+        fill: false
+      },
+      {
+        label: 'Looking Away',
+        data: timeSeriesData.map(d => d.looking_away),
+        borderColor: '#FFC107',
+        fill: false
+      },
+      {
+        label: 'Absent',
+        data: timeSeriesData.map(d => d.absent),
+        borderColor: '#F44336',
+        fill: false
+      },
+      {
+        label: 'Drowsy/Sleeping',
+        data: timeSeriesData.map(d => d.drowsy),
+        borderColor: '#9C27B0',
+        fill: false
+      }
+    ]
+  };
+  
+  return (
+    <div className="host-attention-panel">
+      <div className="panel-header">
+        <h3>Class Attention Overview</h3>
+        <button className="close-btn" onClick={onClose}>&times;</button>
+      </div>
+      
+      <div className="attention-summary">
+        <div className="summary-item">
+          <span className="summary-label">Active Participants:</span>
+          <span className="summary-value">{aggregatedData.activeCount} / {aggregatedData.totalCount}</span>
+        </div>
+        <div className="summary-item">
+          <span className="summary-label">Attentive:</span>
+          <span className="summary-value">{aggregatedData.percentages?.attentive || 0}%</span>
+        </div>
+      </div>
+      
+      <div className="chart-container">
+        <h4>Current Attention Distribution</h4>
+        <Pie data={pieChartData} options={{ responsive: true }} />
+      </div>
+      
+      <div className="chart-container">
+        <h4>Attention Trends</h4>
+        <Line data={lineChartData} options={{ responsive: true }} />
+      </div>
+      
+      <div className="participant-list">
+        <h4>Participant Attention States</h4>
+        {participants.map(participant => (
+          <div 
+            key={participant.id} 
+            className={`participant-item ${attentionData[participant.id]?.state || 'unknown'}`}
+          >
+            <span className="participant-name">{participant.displayName}</span>
+            <span className="attention-indicator">
+              {formatAttentionState(attentionData[participant.id]?.state)}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};</code></pre>
+
+                    <h4>Detailed Attention Detection Process Flow</h4>
+                    <div class="mermaid">
+                        stateDiagram-v2
+                            [*] --> FrameCapture: User Joins Room
+                            FrameCapture --> CanvasProcessing: Every 5 seconds
+                            CanvasProcessing --> Base64Conversion
+                            Base64Conversion --> APIRequest
+                            
+                            APIRequest --> FlaskServer
+                            FlaskServer --> BrightnessCheck
+                            
+                            BrightnessCheck --> FaceDetection: Sufficient brightness
+                            BrightnessCheck --> DarknessState: Low brightness
+                            
+                            FaceDetection --> AbsentState: No face detected
+                            FaceDetection --> FacialLandmarks: Face detected
+                            
+                            FacialLandmarks --> EyeTracking
+                            FacialLandmarks --> HeadOrientation
+                            
+                            EyeTracking --> EARCalculation: Calculate Eye Aspect Ratio
+                            EARCalculation --> SleepingState: EAR < 0.2
+                            EARCalculation --> DrowsyState: 0.2 <= EAR < 0.5
+                            EARCalculation --> EyesOpen: EAR >= 0.5
+                            
+                            HeadOrientation --> LookingPosition
+                            EyesOpen --> LookingPosition
+                            
+                            LookingPosition --> AttentiveState: Looking at camera
+                            LookingPosition --> LookingAwayState: Looking elsewhere
+                            
+                            DarknessState --> StateClassification
+                            AbsentState --> StateClassification
+                            SleepingState --> StateClassification
+                            DrowsyState --> StateClassification
+                            AttentiveState --> StateClassification
+                            LookingAwayState --> StateClassification
+                            
+                            StateClassification --> ConfidenceScoring
+                            ConfidenceScoring --> APIResponse
+                            
+                            APIResponse --> ClientUpdate
+                            ClientUpdate --> UIUpdate
+                            ClientUpdate --> SocketBroadcast: If in room
+                            
+                            SocketBroadcast --> HostDashboard: If user is host
+                            
+                            HostDashboard --> AggregateData
+                            AggregateData --> ChartGeneration
+                            ChartGeneration --> [*]
+                    </div>
+                    <noscript>
+                        <div class="flowchart-fallback">Detailed Attention Detection Process Flow - Enable JavaScript to view interactive diagrams</div>
+                    </noscript>
+
+                    <h4>MediaPipe Face Mesh Landmarks</h4>
+                    <p>The attention detection system uses MediaPipe's 468-point face mesh for precise facial landmark tracking. Key landmark indices include:</p>
+                    <ul>
+                        <li><strong>Eye Landmarks</strong>:
+                            <ul>
+                                <li>Left eye: 362-374</li>
+                                <li>Right eye: 33-46</li>
+                            </ul>
+                        </li>
+                        <li><strong>Head Orientation Landmarks</strong>:
+                            <ul>
+                                <li>Nose tip: 4</li>
+                                <li>Left cheek: 234</li>
+                                <li>Right cheek: 454</li>
+                                <li>Forehead: 10</li>
+                                <li>Chin: 152</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    
+                    <h4>Attention Classification Thresholds</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Attention State</th>
+                                <th>Face Present</th>
+                                <th>Eye Openness</th>
+                                <th>Looking At Camera</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Attentive</td>
+                                <td>&gt; 0.7</td>
+                                <td>&gt; 0.5</td>
+                                <td>&gt; 0.7</td>
+                                <td>User is looking directly at the camera with eyes open</td>
+                            </tr>
+                            <tr>
+                                <td>Looking Away</td>
+                                <td>&gt; 0.5</td>
+                                <td>&gt; 0.5</td>
+                                <td>0.3 - 0.7</td>
+                                <td>User is present but looking elsewhere</td>
+                            </tr>
+                            <tr>
+                                <td>Drowsy</td>
+                                <td>&gt; 0.5</td>
+                                <td>0.2 - 0.5</td>
+                                <td>Any</td>
+                                <td>User's eyes are partially closed</td>
+                            </tr>
+                            <tr>
+                                <td>Sleeping</td>
+                                <td>&gt; 0.5</td>
+                                <td>&lt; 0.2</td>
+                                <td>Any</td>
+                                <td>User's eyes are closed</td>
+                            </tr>
+                            <tr>
+                                <td>Absent</td>
+                                <td>&lt; 0.3</td>
+                                <td>Any</td>
+                                <td>Any</td>
+                                <td>No face detected in frame</td>
+                            </tr>
+                            <tr>
+                                <td>Darkness</td>
+                                <td>Any</td>
+                                <td>Any</td>
+                                <td>Any</td>
+                                <td>Image brightness below 30 (out of 255)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
+
+            <section id="detailed-implementation">
+                <h2>6. Detailed Implementation</h2>
+                
+                <section id="component-interaction">
+                    <h3>6.1 Component Interaction</h3>
+                    <div class="mermaid">
+                        flowchart TD
+                            subgraph Frontend
+                                A[React Application]
+                                B[WebRTC Module]
+                                C[Attention Monitor]
+                                D[User Interface]
+                            end
+                            
+                            subgraph Backend
+                                E[Node.js Server]
+                                F[Socket.io]
+                                G[Room Management]
+                                H[Authentication]
+                            end
+                            
+                            subgraph Attention
+                                I[Flask Server]
+                                J[Computer Vision]
+                                K[MediaPipe]
+                            end
+                            
+                            subgraph Database
+                                L[MongoDB]
+                            end
+                            
+                            A --> B
+                            A --> C
+                            A --> D
+                            B <--> F
+                            C <--> I
+                            E --> F
+                            E --> G
+                            E --> H
+                            I --> J
+                            J --> K
+                            H <--> L
+                            G <--> L
+                    </div>
+                    <noscript>
+                        <div class="flowchart-fallback">Detailed Component Interaction - Enable JavaScript to view interactive diagrams</div>
+                    </noscript>
+
+                    <h4>Communication Flow Between Components</h4>
+                    <ol>
+                        <li><strong>Client-Server Communication</strong>: The React client communicates with the Node.js server through both HTTP REST calls (for authentication, room management) and WebSocket connections via Socket.io (for real-time signaling).</li>
+                        <li><strong>WebRTC Peer Connections</strong>: Once signaling is complete, clients establish direct peer-to-peer connections for media streaming.</li>
+                        <li><strong>Attention Analysis</strong>: The React client periodically captures video frames and sends them to the Python attention server for processing.</li>
+                        <li><strong>Attention Data Distribution</strong>: Processed attention data is sent back to the client, which then forwards relevant updates to the room host via the signaling server.</li>
+                        <li><strong>Database Interactions</strong>: The Node.js server interacts with MongoDB for persistent storage of user data, sessions, and room information.</li>
+                    </ol>
+                </section>
+                
+                <section id="api-endpoints">
+                    <h3>6.2 API Endpoints</h3>
+                    
+                    <h4>Node.js Server Endpoints</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Endpoint</th>
+                                <th>Method</th>
+                                <th>Description</th>
+                                <th>Request Payload</th>
+                                <th>Response</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>/api/auth/register</td>
+                                <td>POST</td>
+                                <td>Register a new user</td>
+                                <td><code>{name, email, password}</code></td>
+                                <td><code>{success, data: {token, user}}</code></td>
+                            </tr>
+                            <tr>
+                                <td>/api/auth/login</td>
+                                <td>POST</td>
+                                <td>Authenticate user</td>
+                                <td><code>{email, password}</code></td>
+                                <td><code>{success, data: {token, user}}</code></td>
+                            </tr>
+                            <tr>
+                                <td>/api/auth/me</td>
+                                <td>GET</td>
+                                <td>Get current user</td>
+                                <td>Authorization header</td>
+                                <td><code>{success, data: {user}}</code></td>
+                            </tr>
+                            <tr>
+                                <td>/api/auth/verify</td>
+                                <td>GET</td>
+                                <td>Verify token validity</td>
+                                <td>Authorization header</td>
+                                <td><code>{success, data: {user}}</code></td>
+                            </tr>
+                            <tr>
+                                <td>/api/debug/rooms</td>
+                                <td>GET</td>
+                                <td>List all rooms (development only)</td>
+                                <td>None</td>
+                                <td><code>{success, count, rooms}</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h4>Attention Server Endpoints</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Endpoint</th>
+                                <th>Method</th>
+                                <th>Description</th>
+                                <th>Request Payload</th>
+                                <th>Response</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>/api/detect_attention</td>
+                                <td>POST</td>
+                                <td>Detect attention from image</td>
+                                <td><code>{image, userId}</code></td>
+                                <td><code>{attention_state, confidence, measurements, details}</code></td>
+                            </tr>
+                            <tr>
+                                <td>/api/calibrate</td>
+                                <td>POST</td>
+                                <td>Calibrate for a specific user</td>
+                                <td><code>{image, userId}</code></td>
+                                <td><code>{calibrated, message, baseline}</code></td>
+                            </tr>
+                            <tr>
+                                <td>/api/room_attention</td>
+                                <td>POST</td>
+                                <td>Get aggregated room attention</td>
+                                <td><code>{roomId, participantIds}</code></td>
+                                <td><code>{roomAttention, participants}</code></td>
+                            </tr>
+                            <tr>
+                                <td>/api/health</td>
+                                <td>GET</td>
+                                <td>Server health check</td>
+                                <td>None</td>
+                                <td><code>{status, version}</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h4>Socket.io Events</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Event</th>
+                                <th>Direction</th>
+                                <th>Description</th>
+                                <th>Payload</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>restore-session</td>
+                                <td>Client → Server</td>
+                                <td>Restore a previous session</td>
+                                <td><code>{sessionId, userId, displayName}</code></td>
+                            </tr>
+                            <tr>
+                                <td>create-room</td>
+                                <td>Client → Server</td>
+                                <td>Create a new room</td>
+                                <td><code>{password}</code></td>
+                            </tr>
+                            <tr>
+                                <td>join-room</td>
+                                <td>Client → Server</td>
+                                <td>Join an existing room</td>
+                                <td><code>{roomId, password, displayName}</code></td>
+                            </tr>
+                            <tr>
+                                <td>leave-room</td>
+                                <td>Client → Server</td>
+                                <td>Leave current room</td>
+                                <td>None</td>
+                            </tr>
+                            <tr>
+                                <td>offer</td>
+                                <td>Client → Server</td>
+                                <td>WebRTC offer</td>
+                                <td><code>{offer, targetUserId}</code></td>
+                            </tr>
+                            <tr>
+                                <td>answer</td>
+                                <td>Client → Server</td>
+                                <td>WebRTC answer</td>
+                                <td><code>{answer, targetUserId}</code></td>
+                            </tr>
+                            <tr>
+                                <td>ice-candidate</td>
+                                <td>Client → Server</td>
+                                <td>ICE candidate</td>
+                                <td><code>{candidate, targetUserId}</code></td>
+                            </tr>
+                            <tr>
+                                <td>chat-message</td>
+                                <td>Client → Server</td>
+                                <td>Chat message</td>
+                                <td><code>{message, roomId}</code></td>
+                            </tr>
+                            <tr>
+                                <td>attention-update</td>
+                                <td>Client → Server</td>
+                                <td>Attention state update</td>
+                                <td><code>{state, userId}</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+                
+                <section id="data-flow-detailed">
+                    <h3>6.3 Detailed Data Flow</h3>
+                    <div class="mermaid">
+                        flowchart TB
+                            subgraph Client
+                                A1[React Application]
+                                A2[Socket.io Client]
+                                A3[WebRTC Connection]
+                                A4[Media Devices]
+                                A5[Canvas/Video]
+                                A6[User Interface]
+                                
+                                A1 --> A2
+                                A1 --> A3
+                                A1 --> A6
+                                A4 --> A5
+                                A5 --> A1
+                            end
+                            
+                            subgraph Server
+                                B1[Express Server]
+                                B2[Socket.io Server]
+                                B3[Authentication]
+                                B4[Room Management]
+                                B5[Session Management]
+                                
+                                B1 --> B2
+                                B1 --> B3
+                                B2 --> B4
+                                B4 --> B5
+                            end
+                            
+                            subgraph AttentionServer
+                                C1[Flask API]
+                                C2[MediaPipe]
+                                C3[Face Detection]
+                                C4[Eye Tracking]
+                                C5[Head Orientation]
+                                C6[Attention Classification]
+                                
+                                C1 --> C2
+                                C2 --> C3
+                                C2 --> C4
+                                C2 --> C5
+                                C3 --> C6
+                                C4 --> C6
+                                C5 --> C6
+                            end
+                            
+                            subgraph Database
+                                D1[MongoDB]
+                                D2[Users Collection]
+                                D3[Sessions Collection]
+                                D4[Rooms Collection]
+                                
+                                D1 --> D2
+                                D1 --> D3
+                                D1 --> D4
+                            end
+                            
+                            A2 <--> B2
+                            A3 <--> |P2P Connection| Z1[Other Clients]
+                            A1 <--> |HTTP| B1
+                            A1 <--> |HTTP| C1
+                            B3 <--> D2
+                            B4 <--> D4
+                            B5 <--> D3
+                    </div>
+                    <noscript>
+                        <div class="flowchart-fallback">Detailed Data Flow Diagram - Enable JavaScript to view interactive diagrams</div>
+                    </noscript>
+
+                    <h4>Comprehensive Data Flow Process</h4>
+                    <ol>
+                        <li><strong>User Authentication</strong>
+                            <ul>
+                                <li>Client sends credentials to authentication endpoint</li>
+                                <li>Server validates against database</li>
+                                <li>JWT token generated and returned to client</li>
+                                <li>Token stored in localStorage and used for subsequent requests</li>
+                            </ul>
+                        </li>
+                        <li><strong>Room Creation/Joining</strong>
+                            <ul>
+                                <li>Client sends room creation/join request via Socket.io</li>
+                                <li>Server validates request and updates database</li>
+                                <li>Room details returned to client</li>
+                                <li>All participants notified of changes</li>
+                            </ul>
+                        </li>
+                        <li><strong>WebRTC Connection</strong>
+                            <ul>
+                                <li>Client generates media stream from camera/microphone</li>
+                                <li>RTCPeerConnection objects created for each peer</li>
+                                <li>SDP offers/answers exchanged via signaling server</li>
+                                <li>ICE candidates shared to establish optimal connection</li>
+                                <li>Media streams attached to video elements on successful connection</li>
+                            </ul>
+                        </li>
+                        <li><strong>Attention Monitoring</strong>
+                            <ul>
+                                <li>Client captures video frames at regular intervals</li>
+                                <li>Frames sent to attention server for analysis</li>
+                                <li>Server processes frames through computer vision pipeline</li>
+                                <li>Attention state determined and returned to client</li>
+                                <li>Client updates UI and forwards state to host</li>
+                                <li>Host aggregates data for all participants</li>
+                            </ul>
+                        </li>
+                        <li><strong>Chat Messaging</strong>
+                            <ul>
+                                <li>Client sends chat message to server</li>
+                                <li>Server validates and broadcasts to all room participants</li>
+                                <li>Recipients display message in chat interface</li>
+                                <li>Chat history maintained for session duration</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </section>
+                
+                <section id="user-journey">
+                    <h3>6.4 User Journey</h3>
+                    <div class="mermaid">
+                        journey
+                            title User Journey Through RTC Application
+                            section Registration
+                                Create Account: 5: User
+                                Login: 5: User
+                            section Room Setup
+                                Create Room: 3: User
+                                Join Room: 4: User
+                                Set Up Devices: 4: User
+                            section Video Conference
+                                Enter Video Chat: 5: User
+                                Connect with Peers: 3: System
+                                Share Video/Audio: 5: User
+                                Chat with Participants: 4: User
+                            section Attention Monitoring
+                                Allow Monitoring: 3: User
+                                View Attention State: 4: Student
+                                View Attention Dashboard: 5: Host
+                            section Session End
+                                Leave Room: 5: User
+                    </div>
+                    <noscript>
+                        <div class="flowchart-fallback">User Journey Map - Enable JavaScript to view interactive diagrams</div>
+                    </noscript>
+
+                    <h4>Detailed User Journey</h4>
+                    <p>The diagram above maps the complete user journey through the application, highlighting key decision points and interactions.</p>
+                    
+                    <h5>1. User Registration and Login</h5>
+                    <ul>
+                        <li>New user completes registration form with name, email, password</li>
+                        <li>Registration validated by server and account created</li>
+                        <li>User logs in with credentials</li>
+                        <li>Authentication token issued and stored in browser</li>
+                    </ul>
+                    
+                    <h5>2. Room Management</h5>
+                    <ul>
+                        <li>User creates a new room or joins existing room by ID</li>
+                        <li>For protected rooms, password is verified</li>
+                        <li>Room information displayed, including current participants</li>
+                    </ul>
+                    
+                    <h5>3. Device Setup</h5>
+                    <ul>
+                        <li>User grants camera and microphone permissions</li>
+                        <li>User selects preferred devices from available options</li>
+                        <li>Video preview shown to confirm camera selection</li>
+                    </ul>
+                    
+                    <h5>4. Video Conference</h5>
+                    <ul>
+                        <li>User enters the video chat interface</li>
+                        <li>Connections established with all participants</li>
+                        <li>Video grid displays all participant streams</li>
+                        <li>User can toggle audio/video, screen sharing, and chat</li>
+                    </ul>
+                    
+                    <h5>5. Attention Monitoring (Student)</h5>
+                    <ul>
+                        <li>Student's attention state analyzed periodically</li>
+                        <li>Feedback provided on current attention state</li>
+                        <li>Calibration option available for improved accuracy</li>
+                    </ul>
+                    
+                    <h5>6. Attention Monitoring (Host)</h5>
+                    <ul>
+                        <li>Host can view attention dashboard</li>
+                        <li>Aggregate metrics show class engagement levels</li>
+                        <li>Individual participant states visible</li>
+                        <li>Historical data available through charts</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section id="setup">
+                <h2>7. Setup & Deployment</h2>
+
+                <h3>Prerequisites</h3>
+                <ul>
+                    <li>Node.js 14+ for the server</li>
+                    <li>Python 3.8+ for the attention server</li>
+                    <li>MongoDB instance</li>
+                    <li>Modern web browser</li>
+                </ul>
+
+                <h3>Server Setup</h3>
+<pre><code># Install dependencies
+npm install
+
+# Create .env file
+PORT=3001
+MONGO_URI=mongodb://localhost:27017/rtc_app
+JWT_SECRET=your_secret_key
+NODE_ENV=development
+
+# Start server
+npm start</code></pre>
+
+                <h3>Attention Server Setup</h3>
+<pre><code># Install dependencies
+pip install -r requirements.txt
+
+# Start server
+python app.py</code></pre>
+
+                <h3>Frontend Setup</h3>
+<pre><code># Install dependencies
+npm install
+
+# Start development server
+npm start
+
+# Build for production
+npm run build</code></pre>
+
+                <h3>Production Deployment Considerations</h3>
+                <ul>
+                    <li>Configure HTTPS with valid certificates for WebRTC security</li>
+                    <li>Set up reverse proxy with Nginx or similar</li>
+                    <li>Configure CORS properly for security</li>
+                    <li>Use environment variables for sensitive configuration</li>
+                    <li>Set up proper TURN servers for NAT traversal</li>
+                </ul>
+            </section>
+
+            <section id="conclusion">
+                <h2>8. Conclusion</h2>
+                <p>The Student Monitoring in Online Classes platform represents a significant advancement in educational technology, addressing one of the most persistent challenges in remote learning environments. By integrating WebRTC-based video conferencing with sophisticated attention analysis capabilities, the system provides educators with unprecedented insights into student engagement patterns.</p>
+
+                <p>The platform's architecture balances technological sophistication with educational utility. The React-based user interface provides educators with intuitive tools for classroom management and engagement monitoring. The Node.js communication server ensures reliable and secure connections between all participants. The Python-based attention analysis engine leverages cutting-edge computer vision techniques to provide meaningful pedagogical insights.</p>
+
+                <p>Beyond its technical achievements, this platform has significant implications for educational practice and research. It enables educators to adapt their teaching strategies in real-time based on student engagement data, supports personalized learning approaches, and provides valuable research data on online learning effectiveness. As remote and hybrid educational models continue to evolve, attention monitoring technology will play an increasingly vital role in ensuring educational quality and equity in digital learning environments.</p>
+            </section>
+        </div>
+    </div>
+</body>
+</html> 
