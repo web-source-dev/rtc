@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faVideo } from '@fortawesome/free-solid-svg-icons';
+import { faVideo, faCamera, faMicrophone, faVolumeUp, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { SocketContext } from '../../context/SocketContext';
 
 const DeviceSelection = () => {
@@ -171,88 +171,169 @@ const DeviceSelection = () => {
   };
   
   return (
-    <div className="d-flex flex-column justify-content-center align-items-center vh-100" style={{ backgroundColor: '#323248' }}>
-      <div className="card shadow rounded-4 p-4" style={{ maxWidth: '600px', backgroundColor: '#252536', color: '#e0e0e0', border: '1px solid #454564' }}>
-        <div className="card-body">
-          <h2 className="card-title text-center mb-4">Setup Your Devices</h2>
-          
-          <div className="video-preview-container mb-4">
-            <video 
-              ref={videoPreviewRef}
-              autoPlay 
-              playsInline 
-              muted 
-              className="rounded w-100"
-              style={{ aspectRatio: '16/9', backgroundColor: 'rgba(37, 37, 54, 0.5)' }}
-            />
+    <div className="d-flex flex-column justify-content-center align-items-center min-vh-100" 
+         style={{ 
+           background: 'linear-gradient(135deg, #323248 0%, #252536 100%)',
+           padding: '2rem 1rem'
+         }}>
+      <div className="card shadow-lg rounded-4 p-4 mx-auto" 
+           style={{ 
+             maxWidth: '800px', 
+             width: '100%',
+             backgroundColor: 'rgba(37, 37, 54, 0.95)', 
+             color: '#e0e0e0', 
+             border: '1px solid rgba(69, 69, 100, 0.5)',
+             backdropFilter: 'blur(10px)'
+           }}>
+        <div className="card-body p-4">
+          <div className="text-center mb-5">
+            <h1 className="display-6 fw-bold mb-2" style={{ color: '#3949AB' }}>Setup Your Devices</h1>
+            <p className="text-muted">Configure your camera and audio before joining the class</p>
           </div>
           
-          <div className="mb-3">
-            <label htmlFor="video-source" className="form-label">Camera</label>
-            <select 
-              id="video-source" 
-              className="form-select border-0"
-              style={{ backgroundColor: '#323248', color: '#e0e0e0', borderColor: '#454564' }}
-              value={selectedVideoDevice}
-              onChange={(e) => setSelectedVideoDevice(e.target.value)}
-            >
-              {videoDevices.map((device, index) => (
-                <option key={device.deviceId} value={device.deviceId}>
-                  {device.label || `Camera ${index + 1}`}
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          <div className="mb-3">
-            <label htmlFor="audio-source" className="form-label">Microphone</label>
-            <select 
-              id="audio-source" 
-              className="form-select border-0"
-              style={{ backgroundColor: '#323248', color: '#e0e0e0', borderColor: '#454564' }}
-              value={selectedAudioDevice}
-              onChange={(e) => setSelectedAudioDevice(e.target.value)}
-            >
-              {audioDevices.map((device, index) => (
-                <option key={device.deviceId} value={device.deviceId}>
-                  {device.label || `Microphone ${index + 1}`}
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          <div className="mb-4">
-            <label htmlFor="audio-output" className="form-label">Speaker</label>
-            <select 
-              id="audio-output" 
-              className="form-select border-0"
-              style={{ backgroundColor: '#323248', color: '#e0e0e0', borderColor: '#454564' }}
-              value={selectedAudioOutput}
-              onChange={(e) => setSelectedAudioOutput(e.target.value)}
-              disabled={typeof HTMLMediaElement.prototype.setSinkId !== 'function'}
-            >
-              {audioOutputDevices.map((device, index) => (
-                <option key={device.deviceId} value={device.deviceId}>
-                  {device.label || `Speaker ${index + 1}`}
-                </option>
-              ))}
-            </select>
-            {typeof HTMLMediaElement.prototype.setSinkId !== 'function' && (
-              <small className="text-muted">
-                Your browser doesn't support audio output selection
-              </small>
-            )}
-          </div>
-          
-          <div className="d-grid">
-            <button 
-              className="btn btn-lg"
-              style={{ backgroundColor: '#3949AB', color: '#ffffff' }}
-              onClick={handleJoinClass}
-            >
-              <FontAwesomeIcon icon={faVideo} className="me-2" />
-              {returningToRoom ? 'Return to Class' : 'Join Class'}
-            </button>
+          <div className="row g-4">
+            <div className="col-lg-7">
+              <div className="video-preview-container mb-4 position-relative rounded-4 overflow-hidden"
+                   style={{ 
+                     backgroundColor: 'rgba(50, 50, 72, 0.5)',
+                     aspectRatio: '16/9'
+                   }}>
+                <video 
+                  ref={videoPreviewRef}
+                  autoPlay 
+                  playsInline 
+                  muted 
+                  className="w-100 h-100 object-fit-cover"
+                />
+                <div className="position-absolute top-0 start-0 p-3">
+                  <span className="badge bg-dark bg-opacity-75">
+                    <FontAwesomeIcon icon={faCamera} className="me-2" />
+                    Camera Preview
+                  </span>
+                </div>
+              </div>
+              
+              <div className="mb-4">
+                <label htmlFor="video-source" className="form-label d-flex align-items-center">
+                  <FontAwesomeIcon icon={faCamera} className="me-2" style={{ color: '#3949AB' }} />
+                  Camera
+                </label>
+                <select 
+                  id="video-source" 
+                  className="form-select form-select-lg border-0"
+                  style={{ 
+                    backgroundColor: 'rgba(50, 50, 72, 0.5)', 
+                    color: '#e0e0e0',
+                    borderRadius: '8px',
+                    padding: '0.75rem 1rem'
+                  }}
+                  value={selectedVideoDevice}
+                  onChange={(e) => setSelectedVideoDevice(e.target.value)}
+                >
+                  {videoDevices.map((device, index) => (
+                    <option key={device.deviceId} value={device.deviceId}>
+                      {device.label || `Camera ${index + 1}`}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className="mb-4">
+                <label htmlFor="audio-source" className="form-label d-flex align-items-center">
+                  <FontAwesomeIcon icon={faMicrophone} className="me-2" style={{ color: '#3949AB' }} />
+                  Microphone
+                </label>
+                <select 
+                  id="audio-source" 
+                  className="form-select form-select-lg border-0"
+                  style={{ 
+                    backgroundColor: 'rgba(50, 50, 72, 0.5)', 
+                    color: '#e0e0e0',
+                    borderRadius: '8px',
+                    padding: '0.75rem 1rem'
+                  }}
+                  value={selectedAudioDevice}
+                  onChange={(e) => setSelectedAudioDevice(e.target.value)}
+                >
+                  {audioDevices.map((device, index) => (
+                    <option key={device.deviceId} value={device.deviceId}>
+                      {device.label || `Microphone ${index + 1}`}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className="mb-4">
+                <label htmlFor="audio-output" className="form-label d-flex align-items-center">
+                  <FontAwesomeIcon icon={faVolumeUp} className="me-2" style={{ color: '#3949AB' }} />
+                  Speaker
+                </label>
+                <select 
+                  id="audio-output" 
+                  className="form-select form-select-lg border-0"
+                  style={{ 
+                    backgroundColor: 'rgba(50, 50, 72, 0.5)', 
+                    color: '#e0e0e0',
+                    borderRadius: '8px',
+                    padding: '0.75rem 1rem'
+                  }}
+                  value={selectedAudioOutput}
+                  onChange={(e) => setSelectedAudioOutput(e.target.value)}
+                  disabled={typeof HTMLMediaElement.prototype.setSinkId !== 'function'}
+                >
+                  {audioOutputDevices.map((device, index) => (
+                    <option key={device.deviceId} value={device.deviceId}>
+                      {device.label || `Speaker ${index + 1}`}
+                    </option>
+                  ))}
+                </select>
+                {typeof HTMLMediaElement.prototype.setSinkId !== 'function' && (
+                  <small className="text-muted mt-2 d-block">
+                    Your browser doesn't support audio output selection
+                  </small>
+                )}
+              </div>
+            </div>
+            
+            <div className="col-lg-5 d-flex flex-column justify-content-between">
+              <div className="device-tips p-4 rounded-4 mb-4" 
+                   style={{ backgroundColor: 'rgba(50, 50, 72, 0.5)' }}>
+                <h5 className="mb-3" style={{ color: '#3949AB' }}>Tips for Best Experience</h5>
+                <ul className="list-unstyled mb-0">
+                  <li className="mb-2">
+                    <FontAwesomeIcon icon={faCamera} className="me-2" style={{ color: '#3949AB' }} />
+                    Ensure good lighting for better video quality
+                  </li>
+                  <li className="mb-2">
+                    <FontAwesomeIcon icon={faMicrophone} className="me-2" style={{ color: '#3949AB' }} />
+                    Use a quiet environment for clear audio
+                  </li>
+                  <li className="mb-2">
+                    <FontAwesomeIcon icon={faVolumeUp} className="me-2" style={{ color: '#3949AB' }} />
+                    Test your speakers before joining
+                  </li>
+                </ul>
+              </div>
+              
+              <div className="d-grid">
+                <button 
+                  className="btn btn-lg"
+                  style={{ 
+                    backgroundColor: '#3949AB', 
+                    color: '#ffffff',
+                    borderRadius: '8px',
+                    padding: '0.75rem 1rem',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onClick={handleJoinClass}
+                  onMouseOver={(e) => e.target.style.backgroundColor = '#2c3a8c'}
+                  onMouseOut={(e) => e.target.style.backgroundColor = '#3949AB'}
+                >
+                  <FontAwesomeIcon icon={faVideo} className="me-2" />
+                  {returningToRoom ? 'Return to Class' : 'Join Class'}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

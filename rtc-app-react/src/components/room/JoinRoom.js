@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { SocketContext } from '../../context/SocketContext';
 import { useAuth } from '../../context/AuthContext';
 import { useAppState } from '../../hooks/useAppState';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDoorOpen, faLock, faSpinner, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 
 const JoinRoom = () => {
   const { roomId } = useParams();
@@ -124,61 +126,117 @@ const JoinRoom = () => {
   }, [roomId, socket, isLoading, error, roomJoinAttempted, password, user, joinRoom, isInstructor]);
   
   return (
-    <div className="d-flex flex-column justify-content-center align-items-center vh-100" style={{ backgroundColor: '#323248' }}>
-      <div className="card shadow-lg rounded-4 p-4 mx-auto" style={{ maxWidth: '500px', backgroundColor: '#252536', color: '#e0e0e0', border: '1px solid #454564' }}>
-        <div className="card-body">
-          <div className="text-center mb-4">
-            <h1 className="display-6 fw-bold text-primary mb-0">Join Class</h1>
-            <p className="text-muted">Class ID: {roomId}</p>
+    <div className="d-flex flex-column justify-content-center align-items-center min-vh-100" 
+         style={{ 
+           background: 'linear-gradient(135deg, #323248 0%, #252536 100%)',
+           padding: '2rem 1rem'
+         }}>
+      <div className="card shadow-lg rounded-4 p-4 mx-auto" 
+           style={{ 
+             maxWidth: '600px',   
+             width: '100%',
+             backgroundColor: 'rgba(37, 37, 54, 0.95)',   
+             color: '#e0e0e0', 
+             border: '1px solid rgba(69, 69, 100, 0.5)',
+             backdropFilter: 'blur(10px)'
+           }}>
+        <div className="card-body p-4">
+          <div className="text-center mb-5">
+            <h1 className="display-6 fw-bold mb-2" style={{ color: '#3949AB' }}>Join Class</h1>
+            <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
+              <span className="badge bg-dark bg-opacity-75 px-3 py-2">
+                Class ID: {roomId}
+              </span>
+            </div>
             {user && (
-              <div className="mt-2">
-                <span className="badge bg-success">Joining as {user.name}</span>
+              <div className="mt-3">
+                <span className="badge bg-success px-3 py-2">
+                  <FontAwesomeIcon icon={faDoorOpen} className="me-2" />
+                  Joining as {user.name}
+                </span>
                 {user.role && (
-                  <span className="badge bg-info ms-2">{user.role}</span>
+                  <span className="badge bg-info ms-2 px-3 py-2">
+                    {user.role}
+                  </span>
                 )}
               </div>
             )}
           </div>
           
           {error && (
-            <div className="alert alert-danger" role="alert">
-              {error}
-              <div className="mt-2">
-                <small>If you're sure this room exists, try refreshing the page or creating a new room.</small>
+            <div className="alert alert-danger d-flex align-items-center mb-4" role="alert">
+              <FontAwesomeIcon icon={faExclamationTriangle} className="me-2" />
+              <div>
+                {error}
+                <div className="mt-2 small">
+                  If you're sure this room exists, try refreshing the page or creating a new room.
+                </div>
               </div>
             </div>
           )}
           
           <div className="mb-4">
-            <label htmlFor="room-password-input" className="form-label">Class Password (if required)</label>
+            <label htmlFor="room-password-input" className="form-label d-flex align-items-center">
+              <FontAwesomeIcon icon={faLock} className="me-2" style={{ color: '#3949AB' }} />
+              Class Password (if required)
+            </label>
             <input 
               type="password" 
-              className="form-control border-0" 
-              style={{ backgroundColor: '#323248', color: '#e0e0e0' }}
+              className="form-control form-control-lg border-0" 
+              style={{ 
+                backgroundColor: 'rgba(50, 50, 72, 0.5)', 
+                color: '#e0e0e0',
+                borderRadius: '8px',
+                padding: '0.75rem 1rem'
+              }}
               id="room-password-input" 
-              placeholder="Class password"
+              placeholder="Enter class password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           
-          <div className="d-grid">
+          <div className="d-grid gap-2 mb-4">
             <button 
               className="btn btn-lg"
-              style={{ backgroundColor: '#3949AB', color: '#ffffff' }}
+              style={{ 
+                backgroundColor: '#3949AB', 
+                color: '#ffffff',
+                borderRadius: '8px',
+                padding: '0.75rem 1rem',
+                transition: 'all 0.3s ease'
+              }}
               onClick={handleJoinRoom}
               disabled={isLoading || !socket || isInstructor}
+              onMouseOver={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#2c3a8c')}
+              onMouseOut={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#3949AB')}
             >
-              {isLoading ? 'Connecting...' : 'Join Class'}
+              {isLoading ? (
+                <>
+                  <FontAwesomeIcon icon={faSpinner} spin className="me-2" />
+                  Connecting...
+                </>
+              ) : (
+                <>
+                  <FontAwesomeIcon icon={faDoorOpen} className="me-2" />
+                  Join Class
+                </>
+              )}
             </button>
           </div>
           
-          <div className="text-center mt-3">
+          <div className="text-center">
             <button 
               className="btn btn-link"
-              style={{ color: '#adb5bd' }}
+              style={{ 
+                color: '#adb5bd',
+                textDecoration: 'none',
+                transition: 'all 0.3s ease'
+              }}
               onClick={() => navigate('/')}
               disabled={isLoading}
+              onMouseOver={(e) => !e.target.disabled && (e.target.style.color = '#ffffff')}
+              onMouseOut={(e) => !e.target.disabled && (e.target.style.color = '#adb5bd')}
             >
               Cancel
             </button>
@@ -186,8 +244,12 @@ const JoinRoom = () => {
           
           <div className="mt-4 small text-muted">
             <details>
-              <summary>Debug Info</summary>
-              <pre className="mt-2" style={{ fontSize: '0.8rem' }}>
+              <summary className="cursor-pointer">Debug Info</summary>
+              <pre className="mt-2 p-3 rounded-3" 
+                   style={{ 
+                     backgroundColor: 'rgba(50, 50, 72, 0.5)',
+                     fontSize: '0.8rem'
+                   }}>
                 {JSON.stringify(debugInfo, null, 2)}
               </pre>
             </details>
